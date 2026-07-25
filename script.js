@@ -2138,7 +2138,885 @@ if (averageElement) {
             )
             +
             "원"
+/* =====================================
+   테스트 모드
+   실제 주문 없음
+===================================== */
 
+
+/* =====================================
+   테스트용 상태
+===================================== */
+
+let testState = {
+
+    active: false,
+
+    step: 0,
+
+    totalShares: 0,
+
+    totalCost: 0,
+
+    averagePrice: 0,
+
+    basePrice: 0,
+
+    targetPrice: 0
+
+};
+
+
+/* =====================================
+   테스트 상태 초기화
+===================================== */
+
+function resetTestMode() {
+
+    testState = {
+
+        active: false,
+
+        step: 0,
+
+        totalShares: 0,
+
+        totalCost: 0,
+
+        averagePrice: 0,
+
+        basePrice: 0,
+
+        targetPrice: 0
+
+    };
+
+
+    const status =
+        document.getElementById(
+            "testStatus"
+        );
+
+
+    const result =
+        document.getElementById(
+            "testResult"
+        );
+
+
+    if (status) {
+
+        status.textContent =
+            "테스트가 초기화되었습니다.";
+
+    }
+
+
+    if (result) {
+
+        result.innerHTML =
+            "테스트 대기";
+
+    }
+
+}
+
+
+/* =====================================
+   테스트 매수
+===================================== */
+
+function testBuy(
+    price,
+    shares
+) {
+
+    const amount =
+        price *
+        shares;
+
+
+    testState.totalCost +=
+        amount;
+
+
+    testState.totalShares +=
+        shares;
+
+
+    testState.averagePrice =
+
+        testState.totalCost
+        /
+        testState.totalShares;
+
+
+    /*
+       매수 후 평균매수가가
+       새로운 기준가격
+    */
+
+    testState.basePrice =
+        testState.averagePrice;
+
+
+    /*
+       평균매수가 +5%
+    */
+
+    testState.targetPrice =
+
+        testState.averagePrice
+        *
+        1.05;
+
+
+    testState.step++;
+
+
+    return {
+
+        price,
+
+        shares,
+
+        amount,
+
+        averagePrice:
+            testState.averagePrice,
+
+        basePrice:
+            testState.basePrice,
+
+        targetPrice:
+            testState.targetPrice
+
+    };
+
+}
+
+
+/* =====================================
+   테스트 전량매도
+===================================== */
+
+function testSellAll(
+    price
+) {
+
+    const shares =
+        testState.totalShares;
+
+
+    const sellAmount =
+        price *
+        shares;
+
+
+    const profit =
+
+        sellAmount
+        -
+        testState.totalCost;
+
+
+    return {
+
+        shares,
+
+        sellAmount,
+
+        profit
+
+    };
+
+}
+
+
+/* =====================================
+   가격 직접 테스트
+===================================== */
+
+function runTestPrice() {
+
+    const input =
+        document.getElementById(
+            "testPriceInput"
+        );
+
+
+    if (!input) {
+
+        return;
+
+    }
+
+
+    const price =
+        Number(
+            input.value
+        );
+
+
+    if (
+        price <= 0
+    ) {
+
+        alert(
+            "테스트 가격을 입력하세요."
+        );
+
+        return;
+
+    }
+
+
+    /*
+       첫 거래
+    */
+
+    if (
+        !testState.active
+    ) {
+
+        testState.active =
+            true;
+
+
+        const result =
+            testBuy(
+                price,
+                30
+            );
+
+
+        showTestResult(
+
+            "🟢 1회차 매수",
+            result
+
+        );
+
+
+        return;
+
+    }
+
+
+    /*
+       목표가 도달
+    */
+
+    if (
+
+        testState.targetPrice > 0
+
+        &&
+
+        price >=
+        testState.targetPrice
+
+    ) {
+
+        const result =
+            testSellAll(
+                price
+            );
+
+
+        showTestSellResult(
+            result
+        );
+
+
+        return;
+
+    }
+
+
+    /*
+       기준가격보다 낮음
+       20주 매수
+    */
+
+    if (
+
+        price <
+        testState.basePrice
+
+    ) {
+
+        const result =
+            testBuy(
+                price,
+                20
+            );
+
+
+        showTestResult(
+
+            "🔴 기준가격보다 낮음 → 20주 추가매수",
+
+            result
+
+        );
+
+
+        return;
+
+    }
+
+
+    /*
+       기준가격과 같음
+       15주 매수
+    */
+
+    if (
+
+        price ===
+        testState.basePrice
+
+    ) {
+
+        const result =
+            testBuy(
+                price,
+                15
+            );
+
+
+        showTestResult(
+
+            "🟠 기준가격과 같음 → 15주 추가매수",
+
+            result
+
+        );
+
+
+        return;
+
+    }
+
+
+    /*
+       기준가격보다 높음
+    */
+
+    showTestWait(
+        price
+    );
+
+}
+
+
+/* =====================================
+   테스트 결과 표시
+===================================== */
+
+function showTestResult(
+    title,
+    result
+) {
+
+    const status =
+        document.getElementById(
+            "testStatus"
+        );
+
+
+    const output =
+        document.getElementById(
+            "testResult"
+        );
+
+
+    if (status) {
+
+        status.textContent =
+            title;
+
+    }
+
+
+    if (output) {
+
+        output.innerHTML =
+
+            "<p><strong>"
+            +
+            title
+            +
+            "</strong></p>"
+
+            +
+
+            "<p>매수가: "
+            +
+            result.price.toLocaleString(
+                "ko-KR"
+            )
+            +
+            "원</p>"
+
+            +
+
+            "<p>매수수량: "
+            +
+            result.shares
+            +
+            "주</p>"
+
+            +
+
+            "<p>총 보유주식: "
+            +
+            testState.totalShares
+            +
+            "주</p>"
+
+            +
+
+            "<p>총 매수금액: "
+            +
+            Math.round(
+                testState.totalCost
+            ).toLocaleString(
+                "ko-KR"
+            )
+            +
+            "원</p>"
+
+            +
+
+            "<p>평균매수가: "
+            +
+            Math.round(
+                result.averagePrice
+            ).toLocaleString(
+                "ko-KR"
+            )
+            +
+            "원</p>"
+
+            +
+
+            "<p>새 기준가격: "
+            +
+            Math.round(
+                result.basePrice
+            ).toLocaleString(
+                "ko-KR"
+            )
+            +
+            "원</p>"
+
+            +
+
+            "<p>+5% 목표매도가: "
+            +
+            Math.round(
+                result.targetPrice
+            ).toLocaleString(
+                "ko-KR"
+            )
+            +
+            "원</p>";
+
+    }
+
+}
+
+
+/* =====================================
+   테스트 대기 표시
+===================================== */
+
+function showTestWait(
+    price
+) {
+
+    const status =
+        document.getElementById(
+            "testStatus"
+        );
+
+
+    const output =
+        document.getElementById(
+            "testResult"
+        );
+
+
+    if (status) {
+
+        status.textContent =
+            "⚪ 현재가가 기준가격보다 높음 → 매수하지 않음";
+
+    }
+
+
+    if (output) {
+
+        output.innerHTML =
+
+            "<p>테스트 가격: "
+            +
+            price.toLocaleString(
+                "ko-KR"
+            )
+            +
+            "원</p>"
+
+            +
+
+            "<p>현재 기준가격: "
+            +
+            Math.round(
+                testState.basePrice
+            ).toLocaleString(
+                "ko-KR"
+            )
+            +
+            "원</p>"
+
+            +
+
+            "<p><strong>매수하지 않고 대기</strong></p>";
+
+    }
+
+}
+
+
+/* =====================================
+   테스트 매도 결과
+===================================== */
+
+function showTestSellResult(
+    result
+) {
+
+    const status =
+        document.getElementById(
+            "testStatus"
+        );
+
+
+    const output =
+        document.getElementById(
+            "testResult"
+        );
+
+
+    if (status) {
+
+        status.textContent =
+            "🔵 +5% 도달 → 전량매도 성공";
+
+    }
+
+
+    if (output) {
+
+        output.innerHTML =
+
+            "<p><strong>🎉 테스트 매도 성공</strong></p>"
+
+            +
+
+            "<p>매도수량: "
+            +
+            result.shares
+            +
+            "주</p>"
+
+            +
+
+            "<p>매도금액: "
+            +
+            Math.round(
+                result.sellAmount
+            ).toLocaleString(
+                "ko-KR"
+            )
+            +
+            "원</p>"
+
+            +
+
+            "<p>실현손익: "
+            +
+            Math.round(
+                result.profit
+            ).toLocaleString(
+                "ko-KR"
+            )
+            +
+            "원</p>"
+
+            +
+
+            "<p><strong>테스트 결과: 성공</strong></p>"
+
+            +
+
+            "<p>다시 테스트하면 새로운 1회차
+            30주 매수부터 시작합니다.</p>";
+
+    }
+
+
+    /*
+       테스트 완료 후 초기화
+    */
+
+    testState = {
+
+        active: false,
+
+        step: 0,
+
+        totalShares: 0,
+
+        totalCost: 0,
+
+        averagePrice: 0,
+
+        basePrice: 0,
+
+        targetPrice: 0
+
+    };
+
+}
+
+
+/* =====================================
+   전체 전략 자동 테스트
+===================================== */
+
+function runFullStrategyTest() {
+
+    resetTestMode();
+
+
+    /*
+       예시 테스트
+
+       1회차:
+       10,000원 × 30주
+
+       2회차:
+       9,000원 × 20주
+
+       3회차:
+       평균매수가와 같은 가격 × 15주
+
+       마지막:
+       평균매수가 +5%
+    */
+
+
+    const price1 =
+        10000;
+
+
+    const result1 =
+        testBuy(
+            price1,
+            30
+        );
+
+
+    testState.active =
+        true;
+
+
+    const price2 =
+        9000;
+
+
+    const result2 =
+        testBuy(
+            price2,
+            20
+        );
+
+
+    /*
+       새로운 평균가격
+    */
+
+    const price3 =
+        testState.basePrice;
+
+
+    const result3 =
+        testBuy(
+            price3,
+            15
+        );
+
+
+    /*
+       목표가
+    */
+
+    const target =
+        testState.targetPrice;
+
+
+    const sell =
+        testSellAll(
+            target
+        );
+
+
+    const output =
+        document.getElementById(
+            "testResult"
+        );
+
+
+    const status =
+        document.getElementById(
+            "testStatus"
+        );
+
+
+    if (status) {
+
+        status.textContent =
+            "🎉 전체 전략 테스트 완료";
+
+    }
+
+
+    if (output) {
+
+        output.innerHTML =
+
+            "<h3>🧪 자동 테스트 결과</h3>"
+
+            +
+
+            "<p>① 1회차: "
+            +
+            result1.shares
+            +
+            "주 × "
+            +
+            price1.toLocaleString(
+                "ko-KR"
+            )
+            +
+            "원</p>"
+
+            +
+
+            "<p>② 2회차: "
+            +
+            result2.shares
+            +
+            "주 × "
+            +
+            price2.toLocaleString(
+                "ko-KR"
+            )
+            +
+            "원</p>"
+
+            +
+
+            "<p>③ 3회차: "
+            +
+            result3.shares
+            +
+            "주 × "
+            +
+            Math.round(
+                price3
+            ).toLocaleString(
+                "ko-KR"
+            )
+            +
+            "원</p>"
+
+            +
+
+            "<hr>"
+
+            +
+
+            "<p>총 보유주식: "
+            +
+            (
+                result1.shares
+                +
+                result2.shares
+                +
+                result3.shares
+            )
+            +
+            "주</p>"
+
+            +
+
+            "<p>최종 평균매수가: "
+            +
+            Math.round(
+                testState.averagePrice
+            ).toLocaleString(
+                "ko-KR"
+            )
+            +
+            "원</p>"
+
+            +
+
+            "<p>+5% 목표매도가: "
+            +
+            Math.round(
+                testState.targetPrice
+            ).toLocaleString(
+                "ko-KR"
+            )
+            +
+            "원</p>"
+
+            +
+
+            "<p>전량매도: "
+            +
+            sell.shares
+            +
+            "주</p>"
+
+            +
+
+            "<p>실현손익: "
+            +
+            Math.round(
+                sell.profit
+            ).toLocaleString(
+                "ko-KR"
+            )
+            +
+            "원</p>"
+
+            +
+
+            "<hr>"
+
+            +
+
+            "<h3>✅ 전략 테스트 성공</h3>";
+
+    }
+
+}
             : "-";
 
 }
