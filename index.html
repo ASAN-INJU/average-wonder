@@ -1,319 +1,306 @@
 <!DOCTYPE html>
+
 <html lang="ko">
 
 <head>
 
-    <meta charset="UTF-8">
+```
+<meta charset="UTF-8">
 
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0"
-    >
+<meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+>
 
-    <meta
-        name="theme-color"
-        content="#111827"
-    >
+<meta
+    name="theme-color"
+    content="#111827"
+>
 
-    <title>V12 Ultimate AI 주식 단타 분석</title>
-
-
-    <!-- =====================================
-         Chart.js
-    ====================================== -->
-
-    <script
-        src="https://cdn.jsdelivr.net/npm/chart.js"
-    ></script>
+<title>V12 Ultimate AI 주식 단타 분석</title>
 
 
-    <!-- =====================================
-         기존 CSS
-    ====================================== -->
+<!-- =====================================
+     Chart.js
+====================================== -->
 
-    <link
-        rel="stylesheet"
-        href="style.css"
-    >
+<script
+    src="https://cdn.jsdelivr.net/npm/chart.js"
+></script>
 
+
+<!-- =====================================
+     CSS
+====================================== -->
+
+<link
+    rel="stylesheet"
+    href="style.css"
+>
+```
 
 </head>
 
-
 <body>
-
 
 <div class="container">
 
+```
+<!-- =====================================
+     헤더
+====================================== -->
 
-    <!-- =====================================
-         헤더
-    ====================================== -->
+<header class="header">
 
-    <header class="header">
+    <h1>
+        📈 V12 Ultimate
+    </h1>
 
-        <h1>
-            📈 V12 Ultimate
-        </h1>
+    <p>
+        AI 주식 단타 분석 시스템
+    </p>
 
-        <p>
-            AI 주식 단타 분석 시스템
-        </p>
-
-    </header>
-
-
-
-    <!-- =====================================
-         종목 검색
-    ====================================== -->
-
-    <section class="search-section">
-
-
-        <div class="search-box">
-
-
-            <input
-                id="stockInput"
-                type="text"
-                placeholder="종목명 또는 종목코드 입력"
-                autocomplete="off"
-            >
-
-
-            <button
-                id="searchButton"
-                onclick="searchStock()"
-            >
-                종목 검색
-            </button>
-
-
-        </div>
-
-
-        <!-- 자동완성 -->
-
-        <div
-            id="suggestions"
-            class="suggestions"
-        ></div>
-
-
-    </section>
+</header>
 
 
 
-    <!-- =====================================
-         종목 기본정보
-    ====================================== -->
+<!-- =====================================
+     종목 검색
+====================================== -->
 
-    <section
-        id="stockInfo"
-        class="stock-info"
-    >
+<section class="search-section">
+
+    <div class="search-box">
+
+        <input
+            id="stockInput"
+            type="text"
+            placeholder="종목명 또는 종목코드 입력"
+            autocomplete="off"
+        >
+
+        <button
+            id="searchButton"
+            type="button"
+            onclick="searchStock()"
+        >
+            종목 검색
+        </button>
+
+    </div>
 
 
-        <div class="stock-title">
+    <!-- 자동완성 -->
 
-            <h2 id="stockName">
-                종목을 검색하세요
-            </h2>
+    <div
+        id="suggestions"
+        class="suggestions"
+    ></div>
 
-            <span id="stockCode">
-                -
+</section>
+
+
+
+<!-- =====================================
+     종목 기본정보
+====================================== -->
+
+<section
+    id="stockInfo"
+    class="stock-info"
+>
+
+    <div class="stock-title">
+
+        <h2 id="stockName">
+            종목을 검색하세요
+        </h2>
+
+        <span id="stockCode">
+            -
+        </span>
+
+    </div>
+
+
+    <div class="price-area">
+
+
+        <div>
+
+            <span>
+                현재가
             </span>
 
-        </div>
-
-
-        <div class="price-area">
-
-
-            <div>
-
-                <span>
-                    현재가
-                </span>
-
-                <strong id="price">
-                    -
-                </strong>
-
-            </div>
-
-
-            <div>
-
-                <span>
-                    등락률
-                </span>
-
-                <strong id="change">
-                    -
-                </strong>
-
-            </div>
-
-
-            <div>
-
-                <span>
-                    거래량
-                </span>
-
-                <strong id="volume">
-                    -
-                </strong>
-
-            </div>
-
+            <strong id="price">
+                -
+            </strong>
 
         </div>
 
 
-    </section>
+        <div>
 
+            <span>
+                등락률
+            </span>
 
-
-    <!-- =====================================
-         AI 분석
-    ====================================== -->
-
-    <section class="analysis-section">
-
-
-        <h2>
-            🤖 AI 단타 분석
-        </h2>
-
-
-        <div class="analysis-grid">
-
-
-            <div class="analysis-card">
-
-                <span>
-                    AI 점수
-                </span>
-
-                <strong id="score">
-                    -
-                </strong>
-
-            </div>
-
-
-            <div class="analysis-card">
-
-                <span>
-                    AI 추천
-                </span>
-
-                <strong id="recommend">
-                    -
-                </strong>
-
-            </div>
-
+            <strong id="change">
+                -
+            </strong>
 
         </div>
 
 
-    </section>
+        <div>
 
+            <span>
+                거래량
+            </span>
 
-
-    <!-- =====================================
-         이동평균선
-    ====================================== -->
-
-    <section class="ma-section">
-
-
-        <h2>
-            📊 이동평균선
-        </h2>
-
-
-        <div class="ma-grid">
-
-
-            <div class="ma-card">
-
-                <span>
-                    MA5
-                </span>
-
-                <strong id="ma5">
-                    -
-                </strong>
-
-            </div>
-
-
-            <div class="ma-card">
-
-                <span>
-                    MA20
-                </span>
-
-                <strong id="ma20">
-                    -
-                </strong>
-
-            </div>
-
-
-            <div class="ma-card">
-
-                <span>
-                    MA60
-                </span>
-
-                <strong id="ma60">
-                    -
-                </strong>
-
-            </div>
-
+            <strong id="volume">
+                -
+            </strong>
 
         </div>
 
 
-    </section>
+    </div>
+
+</section>
 
 
 
-    <!-- =====================================
-         차트
-    ====================================== -->
+<!-- =====================================
+     AI 분석
+====================================== -->
 
-    <section class="chart-section">
+<section class="analysis-section">
 
-
-        <h2>
-            📈 주가 차트
-        </h2>
-
-
-        <canvas
-            id="stockChart"
-        ></canvas>
+    <h2>
+        🤖 AI 단타 분석
+    </h2>
 
 
-    </section>
+    <div class="analysis-grid">
+
+
+        <div class="analysis-card">
+
+            <span>
+                AI 점수
+            </span>
+
+            <strong id="score">
+                -
+            </strong>
+
+        </div>
+
+
+        <div class="analysis-card">
+
+            <span>
+                AI 추천
+            </span>
+
+            <strong id="recommend">
+                -
+            </strong>
+
+        </div>
+
+
+    </div>
+
+</section>
 
 
 
-    <!-- =====================================
+<!-- =====================================
+     이동평균선
+====================================== -->
+
+<section class="ma-section">
+
+    <h2>
+        📊 이동평균선
+    </h2>
+
+
+    <div class="ma-grid">
+
+
+        <div class="ma-card">
+
+            <span>
+                MA5
+            </span>
+
+            <strong id="ma5">
+                -
+            </strong>
+
+        </div>
+
+
+        <div class="ma-card">
+
+            <span>
+                MA20
+            </span>
+
+            <strong id="ma20">
+                -
+            </strong>
+
+        </div>
+
+
+        <div class="ma-card">
+
+            <span>
+                MA60
+            </span>
+
+            <strong id="ma60">
+                -
+            </strong>
+
+        </div>
+
+
+    </div>
+
+</section>
+
+
+
+<!-- =====================================
+     차트
+====================================== -->
+
+<section class="chart-section">
+
+    <h2>
+        📈 주가 차트
+    </h2>
+
+
+    <canvas
+        id="stockChart"
+    ></canvas>
+
+</section>
+
+
 
 <!-- =====================================
      실전 매매 시스템
 ====================================== -->
 
 <section class="trading-panel">
+
 
     <h2>
         🚀 실전 매매 시스템
@@ -343,6 +330,7 @@
         </p>
 
     </div>
+
 
 
     <!-- =====================================
@@ -420,6 +408,7 @@
     </div>
 
 
+
     <!-- =====================================
          매매 판단
     ====================================== -->
@@ -440,11 +429,13 @@
     </div>
 
 
+
     <!-- =====================================
          매매 상세
     ====================================== -->
 
     <div class="trade-detail">
+
 
         <div>
 
@@ -467,7 +458,9 @@
 
         </div>
 
+
     </div>
+
 
 
     <!-- =====================================
@@ -508,218 +501,147 @@
 
 
 
-        <!-- =====================================
-             매매 판단
-        ====================================== -->
+<!-- =====================================
+     매매 규칙
+====================================== -->
 
-        <div class="trade-signal">
+<section class="rule-section">
 
 
-            <div class="signal-title">
+    <h2>
+        📋 실전 매매 규칙
+    </h2>
 
-                현재 매매판단
 
-            </div>
+    <div class="rule-list">
 
 
-            <div
-                id="tradeSignal"
-                class="signal-value"
-            >
+        <div class="rule-item">
 
-                첫 거래 → 30주 매수
-
-            </div>
-
-
-        </div>
-
-
-
-        <!-- =====================================
-             상세 정보
-        ====================================== -->
-
-        <div class="trade-detail">
-
-
-            <div>
-
-                다음 매수수량:
-
-                <strong
-                    id="nextBuyShares"
-                >
-                    30주
-                </strong>
-
-            </div>
-
-
-            <div>
-
-                매도 예정수량:
-
-                <strong
-                    id="sellShares"
-                >
-                    0주
-                </strong>
-
-            </div>
-
-
-        </div>
-
-
-    </section>
-
-
-
-    <!-- =====================================
-         매매 규칙
-    ====================================== -->
-
-    <section class="rule-section">
-
-
-        <h2>
-            📋 실전 매매 규칙
-        </h2>
-
-
-        <div class="rule-list">
-
-
-            <div class="rule-item">
-
-                <strong>
-                    1회차
-                </strong>
-
-                <span>
-                    무조건 30주 매수
-                </span>
-
-            </div>
-
-
-            <div class="rule-item">
-
-                <strong>
-                    현재가 &lt; 기준가격
-                </strong>
-
-                <span>
-                    20주 추가매수
-                </span>
-
-            </div>
-
-
-            <div class="rule-item">
-
-                <strong>
-                    현재가 = 기준가격
-                </strong>
-
-                <span>
-                    15주 추가매수
-                </span>
-
-            </div>
-
-
-            <div class="rule-item">
-
-                <strong>
-                    현재가 &gt; 기준가격
-                </strong>
-
-                <span>
-                    매수하지 않음
-                </span>
-
-            </div>
-
-
-            <div class="rule-item">
-
-                <strong>
-                    평균매수가 +5%
-                </strong>
-
-                <span>
-                    보유주식 전량매도
-                </span>
-
-            </div>
-
-
-            <div class="rule-item">
-
-                <strong>
-                    전량매도 완료
-                </strong>
-
-                <span>
-                    다음 거래일부터 30주 재시작
-                </span>
-
-            </div>
-
-
-        </div>
-
-
-    </section>
-
-
-
-    <!-- =====================================
-         시스템 상태
-    ====================================== -->
-
-    <section class="status-section">
-
-
-        <div>
-
-            API 상태:
-
-            <strong id="apiStatus">
-                대기
+            <strong>
+                1회차
             </strong>
 
+            <span>
+                무조건 30주 매수
+            </span>
+
         </div>
 
 
-        <div>
+        <div class="rule-item">
 
-            데이터 상태:
-
-            <strong id="dataStatus">
-                대기
+            <strong>
+                현재가 &lt; 기준가격
             </strong>
 
+            <span>
+                20주 추가매수
+            </span>
+
         </div>
 
 
-    </section>
+        <div class="rule-item">
+
+            <strong>
+                현재가 = 기준가격
+            </strong>
+
+            <span>
+                15주 추가매수
+            </span>
+
+        </div>
 
 
-</div>
+        <div class="rule-item">
+
+            <strong>
+                현재가 &gt; 기준가격
+            </strong>
+
+            <span>
+                매수하지 않음
+            </span>
+
+        </div>
+
+
+        <div class="rule-item">
+
+            <strong>
+                평균매수가 +5%
+            </strong>
+
+            <span>
+                보유주식 전량매도
+            </span>
+
+        </div>
+
+
+        <div class="rule-item">
+
+            <strong>
+                전량매도 완료
+            </strong>
+
+            <span>
+                다음 거래일부터 30주 재시작
+            </span>
+
+        </div>
+
+
+    </div>
+
+
+</section>
 
 
 
 <!-- =====================================
-     기존 script.js
+     시스템 상태
+====================================== -->
+
+<section class="status-section">
+
+
+    <div>
+
+        API 상태:
+
+        <strong id="apiStatus">
+            대기
+        </strong>
+
+    </div>
+
+
+    <div>
+
+        데이터 상태:
+
+        <strong id="dataStatus">
+            대기
+        </strong>
+
+    </div>
+
+
+</section>
+```
+
+</div>
+
+<!-- =====================================
+     JavaScript
 ====================================== -->
 
 <script
     src="script.js"
 ></script>
-
 
 </body>
 
