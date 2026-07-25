@@ -308,126 +308,203 @@
 
 
     <!-- =====================================
-         실전 매매 시스템
+
+<!-- =====================================
+     실전 매매 시스템
+====================================== -->
+
+<section class="trading-panel">
+
+    <h2>
+        🚀 실전 매매 시스템
+    </h2>
+
+
+    <div class="trading-description">
+
+        <p>
+            첫 거래는 무조건 30주 매수합니다.
+        </p>
+
+        <p>
+            현재가가 기준가격보다 낮으면 20주 추가매수합니다.
+        </p>
+
+        <p>
+            현재가가 기준가격과 같으면 15주 추가매수합니다.
+        </p>
+
+        <p>
+            현재가가 기준가격보다 높으면 매수하지 않습니다.
+        </p>
+
+        <p>
+            평균매수가 대비 +5% 상승하면 전량매도합니다.
+        </p>
+
+    </div>
+
+
+    <!-- =====================================
+         매매 정보
     ====================================== -->
 
-    <section
-        class="trading-panel"
-    >
+    <div class="trading-grid">
 
 
-        <h2>
-            🚀 실전 매매 시스템
-        </h2>
+        <div class="trading-box">
 
+            <span>
+                현재가
+            </span>
 
-        <div class="trading-description">
-
-            <p>
-                첫 거래는 무조건 30주 매수합니다.
-            </p>
-
-            <p>
-                현재가가 기준가격보다 낮으면 20주 추가매수합니다.
-            </p>
-
-            <p>
-                현재가가 기준가격과 같으면 15주 추가매수합니다.
-            </p>
-
-            <p>
-                현재가가 기준가격보다 높으면 매수하지 않습니다.
-            </p>
-
-            <p>
-                평균매수가 대비 +5% 상승하면 전량매도합니다.
-            </p>
+            <strong id="tradeCurrentPrice">
+                -
+            </strong>
 
         </div>
 
 
+        <div class="trading-box">
 
-        <!-- 매매 정보 -->
+            <span>
+                기준가격
+            </span>
 
-        <div class="trading-grid">
-
-
-            <div class="trading-box">
-
-                <span>
-                    현재가
-                </span>
-
-                <strong
-                    id="tradeCurrentPrice"
-                >
-                    -
-                </strong>
-
-            </div>
-
-
-            <div class="trading-box">
-
-                <span>
-                    기준가격
-                </span>
-
-                <strong
-                    id="tradeBasePrice"
-                >
-                    -
-                </strong>
-
-            </div>
-
-
-            <div class="trading-box">
-
-                <span>
-                    평균매수가
-                </span>
-
-                <strong
-                    id="tradeAveragePrice"
-                >
-                    -
-                </strong>
-
-            </div>
-
-
-            <div class="trading-box">
-
-                <span>
-                    보유주식
-                </span>
-
-                <strong
-                    id="tradeShares"
-                >
-                    0주
-                </strong>
-
-            </div>
-
-
-            <div class="trading-box target-box">
-
-                <span>
-                    목표매도가 +5%
-                </span>
-
-                <strong
-                    id="tradeTargetPrice"
-                >
-                    -
-                </strong>
-
-            </div>
-
+            <strong id="tradeBasePrice">
+                -
+            </strong>
 
         </div>
+
+
+        <div class="trading-box">
+
+            <span>
+                평균매수가
+            </span>
+
+            <strong id="tradeAveragePrice">
+                -
+            </strong>
+
+        </div>
+
+
+        <div class="trading-box">
+
+            <span>
+                보유주식
+            </span>
+
+            <strong id="tradeShares">
+                0주
+            </strong>
+
+        </div>
+
+
+        <div class="trading-box target-box">
+
+            <span>
+                목표매도가 +5%
+            </span>
+
+            <strong id="tradeTargetPrice">
+                -
+            </strong>
+
+        </div>
+
+
+    </div>
+
+
+    <!-- =====================================
+         매매 판단
+    ====================================== -->
+
+    <div class="trade-signal">
+
+        <div class="signal-title">
+            현재 매매판단
+        </div>
+
+        <div
+            id="tradeSignal"
+            class="signal-value"
+        >
+            첫 거래 → 30주 매수
+        </div>
+
+    </div>
+
+
+    <!-- =====================================
+         매매 상세
+    ====================================== -->
+
+    <div class="trade-detail">
+
+        <div>
+
+            다음 매수수량:
+
+            <strong id="nextBuyShares">
+                30주
+            </strong>
+
+        </div>
+
+
+        <div>
+
+            매도 예정수량:
+
+            <strong id="sellShares">
+                0주
+            </strong>
+
+        </div>
+
+    </div>
+
+
+    <!-- =====================================
+         매매 버튼
+    ====================================== -->
+
+    <div class="trade-buttons">
+
+
+        <button
+            type="button"
+            onclick="executeTradingDecision()"
+        >
+            📊 매매 판단
+        </button>
+
+
+        <button
+            type="button"
+            onclick="executeBuy()"
+        >
+            🟢 매수 실행
+        </button>
+
+
+        <button
+            type="button"
+            onclick="executeSellAll()"
+        >
+            🔵 전량 매도
+        </button>
+
+
+    </div>
+
+
+</section>
 
 
 
