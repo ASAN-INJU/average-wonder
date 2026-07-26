@@ -325,23 +325,36 @@
             onclick="runTestPrice()"
         >
             ▶ 가격 테스트
-        </button>
+     <div class="test-price-box">
 
-        <button
-            type="button"
-            onclick="runFullStrategyTest()"
-        >
-            🧪 전체 전략 테스트
-        </button>
+    <input
+        id="testPriceInput"
+        type="number"
+        placeholder="테스트 가격 입력"
+    >
 
-        <button
-            type="button"
-            onclick="resetTestMode()"
-        >
-            🔄 테스트 초기화
-        </button>
+    <button
+        type="button"
+        onclick="runTestPrice()"
+    >
+        ▶ 가격 테스트
+    </button>
 
-    </div>
+    <button
+        type="button"
+        onclick="runFullStrategyTest()"
+    >
+        🧪 전체 전략 테스트
+    </button>
+
+    <button
+        type="button"
+        onclick="resetTestMode()"
+    >
+        🔄 테스트 초기화
+    </button>
+
+</div>
 
 
     <div class="test-status">
