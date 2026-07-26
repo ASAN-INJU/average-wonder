@@ -3,104 +3,167 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#111827">
 
-<title>매수 수익 계산기</title>
+<title>단타 매수·수익 관리 시스템</title>
 
 <style>
-    * {
-        box-sizing: border-box;
-    }
+* {
+    box-sizing: border-box;
+}
 
-    body {
-        margin: 0;
-        padding: 20px;
-        font-family: Arial, sans-serif;
-        background: #f3f4f6;
-        color: #111827;
-    }
+body {
+    margin: 0;
+    padding: 15px;
+    font-family: Arial, "Noto Sans KR", sans-serif;
+    background: #f3f4f6;
+    color: #111827;
+}
 
-    .container {
-        max-width: 600px;
-        margin: auto;
-        background: white;
-        padding: 20px;
-        border-radius: 15px;
-        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+.container {
+    max-width: 800px;
+    margin: auto;
+}
+
+h1 {
+    text-align: center;
+    margin: 10px 0 20px;
+    font-size: 24px;
+}
+
+.card {
+    background: white;
+    border-radius: 14px;
+    padding: 18px;
+    margin-bottom: 15px;
+    box-shadow: 0 3px 12px rgba(0,0,0,0.08);
+}
+
+h2 {
+    margin-top: 0;
+    font-size: 19px;
+}
+
+.grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+}
+
+label {
+    display: block;
+    font-size: 14px;
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+input {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+    font-size: 16px;
+}
+
+button {
+    width: 100%;
+    padding: 13px;
+    margin-top: 10px;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.primary {
+    background: #2563eb;
+    color: white;
+}
+
+.success {
+    background: #16a34a;
+    color: white;
+}
+
+.warning {
+    background: #f59e0b;
+    color: white;
+}
+
+.danger {
+    background: #dc2626;
+    color: white;
+}
+
+.gray {
+    background: #6b7280;
+    color: white;
+}
+
+.status {
+    padding: 15px;
+    margin-top: 15px;
+    border-radius: 10px;
+    background: #f3f4f6;
+    font-size: 17px;
+    font-weight: bold;
+    text-align: center;
+}
+
+.buy-ok {
+    background: #dcfce7;
+    color: #166534;
+}
+
+.buy-stop {
+    background: #fee2e2;
+    color: #991b1b;
+}
+
+.info-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 8px 0;
+    border-bottom: 1px solid #eee;
+}
+
+.info-row:last-child {
+    border-bottom: none;
+}
+
+.profit {
+    font-size: 22px;
+    font-weight: bold;
+}
+
+.history-item {
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    padding: 14px;
+    margin-top: 10px;
+    background: #fafafa;
+}
+
+.history-item button {
+    margin-top: 10px;
+}
+
+.empty {
+    text-align: center;
+    color: #777;
+    padding: 20px;
+}
+
+@media(max-width:600px) {
+    .grid {
+        grid-template-columns: 1fr;
     }
 
     h1 {
-        text-align: center;
-        margin-top: 0;
+        font-size: 21px;
     }
-
-    .input-box {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 10px;
-        margin-bottom: 15px;
-    }
-
-    input {
-        width: 100%;
-        padding: 12px;
-        font-size: 16px;
-        border: 1px solid #ccc;
-        border-radius: 8px;
-    }
-
-    button {
-        width: 100%;
-        padding: 13px;
-        margin-top: 8px;
-        border: none;
-        border-radius: 8px;
-        font-size: 16px;
-        cursor: pointer;
-    }
-
-    .buy-btn {
-        background: #2563eb;
-        color: white;
-    }
-
-    .reset-btn {
-        background: #6b7280;
-        color: white;
-    }
-
-    .result {
-        margin-top: 20px;
-        background: #f9fafb;
-        padding: 15px;
-        border-radius: 10px;
-    }
-
-    .row {
-        display: flex;
-        justify-content: space-between;
-        padding: 8px 0;
-        border-bottom: 1px solid #e5e7eb;
-    }
-
-    .row:last-child {
-        border-bottom: none;
-    }
-
-    .highlight {
-        font-size: 20px;
-        font-weight: bold;
-    }
-
-    .history {
-        margin-top: 20px;
-    }
-
-    .history-item {
-        padding: 10px;
-        margin-top: 8px;
-        background: #f3f4f6;
-        border-radius: 8px;
-    }
+}
 </style>
 </head>
 
@@ -108,109 +171,421 @@
 
 <div class="container">
 
-    <h1>📈 매수 수익 계산기</h1>
+<h1>📈 단타 매수 · 수익 관리 시스템</h1>
 
-    <div class="input-box">
+<!-- ===============================
+     종목 기본정보
+================================ -->
 
-        <input
-            type="number"
-            id="buyPrice"
-            placeholder="매수가격"
-        >
+<div class="card">
 
-        <input
-            type="number"
-            id="buyQuantity"
-            placeholder="매수 주식수"
-        >
+<h2>① 종목 정보</h2>
 
-    </div>
+<div class="grid">
 
-    <button
-        class="buy-btn"
-        onclick="addBuy()"
-    >
-        매수 입력
-    </button>
+<div>
+<label>종목명</label>
+<input
+    type="text"
+    id="stockName"
+    placeholder="예: 기업은행"
+>
+</div>
 
-    <button
-        class="reset-btn"
-        onclick="resetAll()"
-    >
-        전체 초기화
-    </button>
+<div>
+<label>현재 주가</label>
+<input
+    type="number"
+    id="currentPrice"
+    placeholder="예: 21350"
+>
+</div>
+
+<div>
+<label>20일 이동평균선</label>
+<input
+    type="number"
+    id="ma20"
+    placeholder="예: 21000"
+>
+</div>
+
+<div>
+<label>매수 주식 수</label>
+<input
+    type="number"
+    id="buyQuantity"
+    placeholder="예: 30"
+>
+</div>
+
+</div>
+
+<button
+    class="primary"
+    onclick="checkBuyCondition()"
+>
+매수 조건 확인
+</button>
+
+<div
+    id="buyStatus"
+    class="status"
+>
+현재가와 20일선을 입력하세요.
+</div>
+
+</div>
 
 
-    <div class="result">
+<!-- ===============================
+     매수 실행
+================================ -->
 
-        <div class="row">
-            <span>총 매수금액</span>
-            <strong id="totalAmount">0원</strong>
-        </div>
+<div class="card">
 
-        <div class="row">
-            <span>총 보유주식</span>
-            <strong id="totalQuantity">0주</strong>
-        </div>
+<h2>② 매수 실행</h2>
 
-        <div class="row">
-            <span>평균매수가</span>
-            <strong id="averagePrice">0원</strong>
-        </div>
+<button
+    class="success"
+    onclick="executeBuy()"
+>
+매수 실행
+</button>
 
-        <div class="row">
-            <span>+5% 목표매도가</span>
-            <strong id="targetPrice">0원</strong>
-        </div>
+<div id="buyMessage" class="status">
+아직 매수하지 않았습니다.
+</div>
 
-        <div class="row highlight">
-            <span>+5% 예상수익금</span>
-            <strong id="profit">0원</strong>
-        </div>
-
-    </div>
+</div>
 
 
-    <div class="history">
+<!-- ===============================
+     현재 매매 현황
+================================ -->
 
-        <h3>매수 내역</h3>
+<div class="card">
 
-        <div id="historyList"></div>
+<h2>③ 현재 매매 현황</h2>
 
-    </div>
+<div class="info-row">
+<span>종목</span>
+<strong id="displayStock">-</strong>
+</div>
+
+<div class="info-row">
+<span>총 매수수량</span>
+<strong id="totalQuantity">0주</strong>
+</div>
+
+<div class="info-row">
+<span>총 매수금액</span>
+<strong id="totalAmount">0원</strong>
+</div>
+
+<div class="info-row">
+<span>평균매수가</span>
+<strong id="averagePrice">0원</strong>
+</div>
+
+<div class="info-row">
+<span>+5% 목표 매도가</span>
+<strong id="targetPrice">0원</strong>
+</div>
+
+<div class="info-row">
+<span>예상 수익금</span>
+<strong
+    id="expectedProfit"
+    class="profit"
+>
+0원
+</strong>
+</div>
+
+</div>
+
+
+<!-- ===============================
+     매도
+================================ -->
+
+<div class="card">
+
+<h2>④ 매도</h2>
+
+<div class="grid">
+
+<div>
+<label>현재 매도가</label>
+
+<input
+    type="number"
+    id="sellPrice"
+    placeholder="현재 주가 입력"
+>
+</div>
+
+</div>
+
+<button
+    class="warning"
+    onclick="checkSellCondition()"
+>
+매도 조건 확인
+</button>
+
+<div
+    id="sellStatus"
+    class="status"
+>
+평균매수가 +5% 도달 여부를 확인하세요.
+</div>
+
+<button
+    class="danger"
+    onclick="executeSell()"
+>
+전량 매도
+</button>
+
+</div>
+
+
+<!-- ===============================
+     수익 기록
+================================ -->
+
+<div class="card">
+
+<h2>⑤ 수익 기록</h2>
+
+<div id="historyList">
+
+<div class="empty">
+아직 수익 기록이 없습니다.
+</div>
+
+</div>
+
+<button
+    class="danger"
+    onclick="clearHistory()"
+>
+전체 수익 기록 삭제
+</button>
+
+</div>
 
 </div>
 
 
 <script>
 
-let totalAmount = 0;
-let totalQuantity = 0;
-let round = 0;
+/* ==========================================
+   현재 매매 데이터
+========================================== */
 
-let history = [];
+let trade = {
+
+    stockName: "",
+
+    totalQuantity: 0,
+
+    totalAmount: 0,
+
+    averagePrice: 0
+
+};
 
 
-function addBuy() {
+/* ==========================================
+   수익 기록 불러오기
+========================================== */
 
-    const price =
+let profitHistory =
+    JSON.parse(
+        localStorage.getItem(
+            "profitHistory"
+        ) || "[]"
+    );
+
+
+/* ==========================================
+   숫자 포맷
+========================================== */
+
+function formatNumber(number) {
+
+    return Math.round(number)
+        .toLocaleString("ko-KR");
+
+}
+
+
+/* ==========================================
+   매수 조건 확인
+========================================== */
+
+function checkBuyCondition() {
+
+    const currentPrice =
         Number(
-            document.getElementById("buyPrice").value
+            document.getElementById(
+                "currentPrice"
+            ).value
         );
 
-    const quantity =
+    const ma20 =
         Number(
-            document.getElementById("buyQuantity").value
+            document.getElementById(
+                "ma20"
+            ).value
+        );
+
+    const status =
+        document.getElementById(
+            "buyStatus"
         );
 
 
     if (
-        price <= 0 ||
-        quantity <= 0
+        !currentPrice ||
+        !ma20
+    ) {
+
+        status.textContent =
+            "현재 주가와 20일선을 입력하세요.";
+
+        status.className =
+            "status buy-stop";
+
+        return;
+
+    }
+
+
+    /*
+    ======================================
+    1차 매수
+    ======================================
+    */
+
+    if (
+        trade.totalQuantity === 0
+    ) {
+
+        if (
+            currentPrice <= ma20
+        ) {
+
+            status.textContent =
+                "✅ 20일선 아래입니다. 1차 매수 가능합니다.";
+
+            status.className =
+                "status buy-ok";
+
+        } else {
+
+            status.textContent =
+                "⏸ 현재가가 20일선 위입니다. 매수 통과.";
+
+            status.className =
+                "status buy-stop";
+
+        }
+
+        return;
+
+    }
+
+
+    /*
+    ======================================
+    추가 매수
+    ======================================
+    */
+
+    if (
+        currentPrice > ma20
+    ) {
+
+        status.textContent =
+            "⏸ 현재가가 20일선 위입니다. 추가매수 통과.";
+
+        status.className =
+            "status buy-stop";
+
+        return;
+
+    }
+
+
+    if (
+        currentPrice < trade.averagePrice
+    ) {
+
+        status.textContent =
+            "✅ 20일선 아래 + 평균매수가보다 낮습니다. 추가매수 가능합니다.";
+
+        status.className =
+            "status buy-ok";
+
+    } else {
+
+        status.textContent =
+            "⏸ 20일선 아래이지만 평균매수가보다 높습니다. 추가매수 통과.";
+
+        status.className =
+            "status buy-stop";
+
+    }
+
+}
+
+
+/* ==========================================
+   매수 실행
+========================================== */
+
+function executeBuy() {
+
+    const stockName =
+        document.getElementById(
+            "stockName"
+        ).value.trim();
+
+    const currentPrice =
+        Number(
+            document.getElementById(
+                "currentPrice"
+            ).value
+        );
+
+    const ma20 =
+        Number(
+            document.getElementById(
+                "ma20"
+            ).value
+        );
+
+    const quantity =
+        Number(
+            document.getElementById(
+                "buyQuantity"
+            ).value
+        );
+
+
+    if (
+        !stockName ||
+        !currentPrice ||
+        !ma20 ||
+        !quantity
     ) {
 
         alert(
-            "매수가격과 주식수를 입력하세요."
+            "종목명, 현재가, 20일선, 매수수량을 모두 입력하세요."
         );
 
         return;
@@ -218,100 +593,458 @@ function addBuy() {
     }
 
 
-    round++;
+    /*
+    ======================================
+    20일선 조건
+    ======================================
+    */
+
+    if (
+        currentPrice > ma20
+    ) {
+
+        alert(
+            "현재가가 20일 이동평균선 위입니다.\n매수하지 않고 통과합니다."
+        );
+
+        return;
+
+    }
 
 
-    const amount =
-        price * quantity;
+    /*
+    ======================================
+    추가매수 조건
+    ======================================
+    */
+
+    if (
+        trade.totalQuantity > 0 &&
+        currentPrice >= trade.averagePrice
+    ) {
+
+        alert(
+            "현재가가 기존 평균매수가보다 높거나 같습니다.\n추가매수하지 않고 통과합니다."
+        );
+
+        return;
+
+    }
 
 
-    totalAmount += amount;
+    /*
+    ======================================
+    매수 처리
+    ======================================
+    */
 
-    totalQuantity += quantity;
+    const buyAmount =
+        currentPrice * quantity;
 
 
-    history.push({
+    trade.stockName =
+        stockName;
 
-        round: round,
 
-        price: price,
+    trade.totalQuantity +=
+        quantity;
 
-        quantity: quantity,
 
-        amount: amount
+    trade.totalAmount +=
+        buyAmount;
 
-    });
+
+    trade.averagePrice =
+        trade.totalAmount /
+        trade.totalQuantity;
+
+
+    document.getElementById(
+        "buyMessage"
+    ).textContent =
+        `✅ ${quantity}주 매수 완료`;
 
 
     updateDisplay();
 
+}
+
+
+/* ==========================================
+   화면 업데이트
+========================================== */
+
+function updateDisplay() {
 
     document.getElementById(
-        "buyPrice"
+        "displayStock"
+    ).textContent =
+        trade.stockName || "-";
+
+
+    document.getElementById(
+        "totalQuantity"
+    ).textContent =
+        formatNumber(
+            trade.totalQuantity
+        ) + "주";
+
+
+    document.getElementById(
+        "totalAmount"
+    ).textContent =
+        formatNumber(
+            trade.totalAmount
+        ) + "원";
+
+
+    document.getElementById(
+        "averagePrice"
+    ).textContent =
+        formatNumber(
+            trade.averagePrice
+        ) + "원";
+
+
+    const targetPrice =
+        trade.averagePrice * 1.05;
+
+
+    document.getElementById(
+        "targetPrice"
+    ).textContent =
+        formatNumber(
+            targetPrice
+        ) + "원";
+
+
+    const expectedProfit =
+        (
+            targetPrice -
+            trade.averagePrice
+        )
+        *
+        trade.totalQuantity;
+
+
+    document.getElementById(
+        "expectedProfit"
+    ).textContent =
+        "+" +
+        formatNumber(
+            expectedProfit
+        ) +
+        "원";
+
+}
+
+
+/* ==========================================
+   매도 조건 확인
+========================================== */
+
+function checkSellCondition() {
+
+    const sellPrice =
+        Number(
+            document.getElementById(
+                "sellPrice"
+            ).value
+        );
+
+
+    if (
+        trade.totalQuantity === 0
+    ) {
+
+        alert(
+            "현재 보유 주식이 없습니다."
+        );
+
+        return;
+
+    }
+
+
+    if (
+        !sellPrice
+    ) {
+
+        alert(
+            "매도가를 입력하세요."
+        );
+
+        return;
+
+    }
+
+
+    const targetPrice =
+        trade.averagePrice * 1.05;
+
+
+    const status =
+        document.getElementById(
+            "sellStatus"
+        );
+
+
+    if (
+        sellPrice >= targetPrice
+    ) {
+
+        const profit =
+            (
+                sellPrice -
+                trade.averagePrice
+            )
+            *
+            trade.totalQuantity;
+
+
+        status.textContent =
+            "🎉 +5% 목표가에 도달했습니다. 전량매도 가능합니다.\n" +
+            "예상 수익금: " +
+            formatNumber(
+                profit
+            ) +
+            "원";
+
+
+        status.className =
+            "status buy-ok";
+
+    } else {
+
+        const profit =
+            (
+                sellPrice -
+                trade.averagePrice
+            )
+            *
+            trade.totalQuantity;
+
+
+        status.textContent =
+            "⏳ 아직 +5% 목표가에 도달하지 않았습니다.\n" +
+            "현재 예상 수익금: " +
+            formatNumber(
+                profit
+            ) +
+            "원";
+
+
+        status.className =
+            "status buy-stop";
+
+    }
+
+}
+
+
+/* ==========================================
+   전량 매도
+========================================== */
+
+function executeSell() {
+
+    if (
+        trade.totalQuantity === 0
+    ) {
+
+        alert(
+            "보유 주식이 없습니다."
+        );
+
+        return;
+
+    }
+
+
+    const sellPrice =
+        Number(
+            document.getElementById(
+                "sellPrice"
+            ).value
+        );
+
+
+    if (
+        !sellPrice
+    ) {
+
+        alert(
+            "매도가를 입력하세요."
+        );
+
+        return;
+
+    }
+
+
+    const targetPrice =
+        trade.averagePrice * 1.05;
+
+
+    if (
+        sellPrice < targetPrice
+    ) {
+
+        alert(
+            "아직 평균매수가 대비 +5%에 도달하지 않았습니다."
+        );
+
+        return;
+
+    }
+
+
+    const profit =
+        (
+            sellPrice -
+            trade.averagePrice
+        )
+        *
+        trade.totalQuantity;
+
+
+    const profitRate =
+        (
+            (
+                sellPrice /
+                trade.averagePrice
+            ) - 1
+        )
+        * 100;
+
+
+    /*
+    ======================================
+    수익 기록 저장
+    ======================================
+    */
+
+    const record = {
+
+        id:
+            Date.now(),
+
+        stockName:
+            trade.stockName,
+
+        quantity:
+            trade.totalQuantity,
+
+        averagePrice:
+            trade.averagePrice,
+
+        sellPrice:
+            sellPrice,
+
+        profit:
+            profit,
+
+        profitRate:
+            profitRate,
+
+        date:
+            new Date()
+            .toLocaleString(
+                "ko-KR"
+            )
+
+    };
+
+
+    profitHistory.push(
+        record
+    );
+
+
+    localStorage.setItem(
+
+        "profitHistory",
+
+        JSON.stringify(
+            profitHistory
+        )
+
+    );
+
+
+    alert(
+
+        "🎉 전량매도 완료!\n\n" +
+
+        "종목: " +
+        trade.stockName +
+        "\n" +
+
+        "수익금: +" +
+        formatNumber(
+            profit
+        ) +
+        "원"
+
+    );
+
+
+    /*
+    ======================================
+    현재 매매 초기화
+    ======================================
+    */
+
+    trade = {
+
+        stockName: "",
+
+        totalQuantity: 0,
+
+        totalAmount: 0,
+
+        averagePrice: 0
+
+    };
+
+
+    document.getElementById(
+        "stockName"
     ).value = "";
+
+
+    document.getElementById(
+        "currentPrice"
+    ).value = "";
+
+
+    document.getElementById(
+        "ma20"
+    ).value = "";
+
 
     document.getElementById(
         "buyQuantity"
     ).value = "";
 
-}
-
-
-function updateDisplay() {
-
-
-    const averagePrice =
-        totalQuantity > 0
-        ? totalAmount / totalQuantity
-        : 0;
-
-
-    const targetPrice =
-        averagePrice * 1.05;
-
-
-    const profit =
-        (targetPrice * totalQuantity)
-        - totalAmount;
-
 
     document.getElementById(
-        "totalAmount"
-    ).innerText =
-        formatMoney(totalAmount);
+        "sellPrice"
+    ).value = "";
 
 
-    document.getElementById(
-        "totalQuantity"
-    ).innerText =
-        totalQuantity.toLocaleString()
-        + "주";
+    updateDisplay();
 
-
-    document.getElementById(
-        "averagePrice"
-    ).innerText =
-        formatMoney(averagePrice);
-
-
-    document.getElementById(
-        "targetPrice"
-    ).innerText =
-        formatMoney(targetPrice);
-
-
-    document.getElementById(
-        "profit"
-    ).innerText =
-        formatMoney(profit);
-
-
-    updateHistory();
+    renderHistory();
 
 }
 
 
-function updateHistory() {
+/* ==========================================
+   수익 기록 표시
+========================================== */
+
+function renderHistory() {
 
     const list =
         document.getElementById(
@@ -319,58 +1052,88 @@ function updateHistory() {
         );
 
 
-    list.innerHTML = "";
+    if (
+        profitHistory.length === 0
+    ) {
+
+        list.innerHTML =
+            `<div class="empty">
+                아직 수익 기록이 없습니다.
+            </div>`;
+
+        return;
+
+    }
 
 
-    history.forEach(item => {
+    list.innerHTML =
+        profitHistory
+        .slice()
+        .reverse()
+        .map(
+            record => `
 
+            <div class="history-item">
 
-        const div =
-            document.createElement(
-                "div"
-            );
+                <strong>
+                    ${record.stockName}
+                </strong>
 
+                <div>
+                    매도일:
+                    ${record.date}
+                </div>
 
-        div.className =
-            "history-item";
+                <div>
+                    매수수량:
+                    ${formatNumber(record.quantity)}주
+                </div>
 
+                <div>
+                    평균매수가:
+                    ${formatNumber(record.averagePrice)}원
+                </div>
 
-        div.innerHTML = `
+                <div>
+                    매도가:
+                    ${formatNumber(record.sellPrice)}원
+                </div>
 
-            <strong>
-                ${item.round}회차
-            </strong>
+                <div class="profit">
+                    수익금:
+                    +${formatNumber(record.profit)}원
+                </div>
 
-            <br>
+                <div>
+                    수익률:
+                    ${record.profitRate.toFixed(2)}%
+                </div>
 
-            매수가:
-            ${formatMoney(item.price)}
+                <button
+                    class="danger"
+                    onclick="deleteHistory(${record.id})"
+                >
+                    이 기록 삭제
+                </button>
 
-            <br>
+            </div>
 
-            수량:
-            ${item.quantity.toLocaleString()}주
-
-            <br>
-
-            매수금액:
-            ${formatMoney(item.amount)}
-
-        `;
-
-
-        list.appendChild(div);
-
-    });
+        `
+        )
+        .join("");
 
 }
 
 
-function resetAll() {
+/* ==========================================
+   개별 기록 삭제
+========================================== */
+
+function deleteHistory(id) {
 
     if (
         !confirm(
-            "모든 매수 내역을 초기화할까요?"
+            "이 수익 기록을 삭제할까요?"
         )
     ) {
 
@@ -379,28 +1142,77 @@ function resetAll() {
     }
 
 
-    totalAmount = 0;
-
-    totalQuantity = 0;
-
-    round = 0;
-
-    history = [];
+    profitHistory =
+        profitHistory.filter(
+            item =>
+                item.id !== id
+        );
 
 
-    updateDisplay();
+    localStorage.setItem(
+
+        "profitHistory",
+
+        JSON.stringify(
+            profitHistory
+        )
+
+    );
+
+
+    renderHistory();
 
 }
 
 
-function formatMoney(value) {
+/* ==========================================
+   전체 기록 삭제
+========================================== */
 
-    return Math.round(value)
-        .toLocaleString()
-        + "원";
+function clearHistory() {
+
+    if (
+        profitHistory.length === 0
+    ) {
+
+        alert(
+            "삭제할 기록이 없습니다."
+        );
+
+        return;
+
+    }
+
+
+    if (
+        !confirm(
+            "모든 수익 기록을 삭제할까요?"
+        )
+    ) {
+
+        return;
+
+    }
+
+
+    profitHistory = [];
+
+
+    localStorage.removeItem(
+        "profitHistory"
+    );
+
+
+    renderHistory();
 
 }
 
+
+/* ==========================================
+   시작
+========================================== */
+
+renderHistory();
 
 updateDisplay();
 
