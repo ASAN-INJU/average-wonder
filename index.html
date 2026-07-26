@@ -1,732 +1,410 @@
 <!DOCTYPE html>
-
 <html lang="ko">
-
 <head>
-
-```
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<meta
-    name="viewport"
-    content="width=device-width, initial-scale=1.0"
->
+<title>매수 수익 계산기</title>
 
-<meta
-    name="theme-color"
-    content="#111827"
->
+<style>
+    * {
+        box-sizing: border-box;
+    }
 
-<title>V12 Ultimate AI 주식 단타 분석</title>
+    body {
+        margin: 0;
+        padding: 20px;
+        font-family: Arial, sans-serif;
+        background: #f3f4f6;
+        color: #111827;
+    }
 
+    .container {
+        max-width: 600px;
+        margin: auto;
+        background: white;
+        padding: 20px;
+        border-radius: 15px;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    }
 
-<!-- =====================================
-     Chart.js
-====================================== -->
+    h1 {
+        text-align: center;
+        margin-top: 0;
+    }
 
-<script
-    src="https://cdn.jsdelivr.net/npm/chart.js"
-></script>
+    .input-box {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+        margin-bottom: 15px;
+    }
 
+    input {
+        width: 100%;
+        padding: 12px;
+        font-size: 16px;
+        border: 1px solid #ccc;
+        border-radius: 8px;
+    }
 
-<!-- =====================================
-     CSS
-====================================== -->
+    button {
+        width: 100%;
+        padding: 13px;
+        margin-top: 8px;
+        border: none;
+        border-radius: 8px;
+        font-size: 16px;
+        cursor: pointer;
+    }
 
-<link
-    rel="stylesheet"
-    href="style.css"
->
-```
+    .buy-btn {
+        background: #2563eb;
+        color: white;
+    }
 
+    .reset-btn {
+        background: #6b7280;
+        color: white;
+    }
+
+    .result {
+        margin-top: 20px;
+        background: #f9fafb;
+        padding: 15px;
+        border-radius: 10px;
+    }
+
+    .row {
+        display: flex;
+        justify-content: space-between;
+        padding: 8px 0;
+        border-bottom: 1px solid #e5e7eb;
+    }
+
+    .row:last-child {
+        border-bottom: none;
+    }
+
+    .highlight {
+        font-size: 20px;
+        font-weight: bold;
+    }
+
+    .history {
+        margin-top: 20px;
+    }
+
+    .history-item {
+        padding: 10px;
+        margin-top: 8px;
+        background: #f3f4f6;
+        border-radius: 8px;
+    }
+</style>
 </head>
 
 <body>
 
 <div class="container">
 
-```
-<!-- =====================================
-     헤더
-====================================== -->
+    <h1>📈 매수 수익 계산기</h1>
 
-<header class="header">
-
-    <h1>
-        📈 V12 Ultimate
-    </h1>
-
-    <p>
-        AI 주식 단타 분석 시스템
-    </p>
-
-</header>
-
-
-
-<!-- =====================================
-     종목 검색
-====================================== -->
-
-<section class="search-section">
-
-    <div class="search-box">
+    <div class="input-box">
 
         <input
-            id="stockInput"
-            type="text"
-            placeholder="종목명 또는 종목코드 입력"
-            autocomplete="off"
-        >
-
-        <button
-            id="searchButton"
-            type="button"
-            onclick="searchStock()"
-        >
-            종목 검색
-        </button>
-
-    </div>
-
-
-    <!-- 자동완성 -->
-
-    <div
-        id="suggestions"
-        class="suggestions"
-    ></div>
-
-</section>
-
-
-
-<!-- =====================================
-     종목 기본정보
-====================================== -->
-
-<section
-    id="stockInfo"
-    class="stock-info"
->
-
-    <div class="stock-title">
-
-        <h2 id="stockName">
-            종목을 검색하세요
-        </h2>
-
-        <span id="stockCode">
-            -
-        </span>
-
-    </div>
-
-
-    <div class="price-area">
-
-
-        <div>
-
-            <span>
-                현재가
-            </span>
-
-            <strong id="price">
-                -
-            </strong>
-
-        </div>
-
-
-        <div>
-
-            <span>
-                등락률
-            </span>
-
-            <strong id="change">
-                -
-            </strong>
-
-        </div>
-
-
-        <div>
-
-            <span>
-                거래량
-            </span>
-
-            <strong id="volume">
-                -
-            </strong>
-
-        </div>
-
-
-    </div>
-
-</section>
-
-
-
-<!-- =====================================
-     AI 분석
-====================================== -->
-
-<section class="analysis-section">
-
-    <h2>
-        🤖 AI 단타 분석
-    </h2>
-
-
-    <div class="analysis-grid">
-
-
-        <div class="analysis-card">
-
-            <span>
-                AI 점수
-            </span>
-
-            <strong id="score">
-                -
-            </strong>
-
-        </div>
-
-
-        <div class="analysis-card">
-
-            <span>
-                AI 추천
-            </span>
-
-            <strong id="recommend">
-                -
-            </strong>
-
-        </div>
-
-
-    </div>
-
-</section>
-
-
-
-<!-- =====================================
-     이동평균선
-====================================== -->
-
-<section class="ma-section">
-
-    <h2>
-        📊 이동평균선
-    </h2>
-
-
-    <div class="ma-grid">
-
-
-        <div class="ma-card">
-
-            <span>
-                MA5
-            </span>
-
-            <strong id="ma5">
-                -
-            </strong>
-
-        </div>
-
-
-        <div class="ma-card">
-
-            <span>
-                MA20
-            </span>
-
-            <strong id="ma20">
-                -
-            </strong>
-
-        </div>
-
-
-        <div class="ma-card">
-
-            <span>
-                MA60
-            </span>
-
-            <strong id="ma60">
-                -
-            </strong>
-
-        </div>
-
-
-    </div>
-
-</section>
-
-
-
-<!-- =====================================
-     차트
-====================================== -->
-
-<section class="chart-section">
-
-    <h2>
-        📈 주가 차트
-    </h2>
-
-
-    <canvas
-        id="stockChart"
-    ></canvas>
-
-</section>
-
-
-
-<!-- =====================================
-     실전 매매 시스템
-====================================== -->
-<!-- =====================================
-     테스트 모드
-====================================== -->
-
-<section class="test-mode-panel">
-
-    <h2>🧪 테스트 모드</h2>
-
-    <p>
-        실제 주문 없이 가격을 직접 입력하여
-        30주 → 20주 → 15주 → +5% 전량매도
-        전략을 자동 검증합니다.
-    </p>
-
-    <div class="test-price-box">
-
-        <input
-            id="testPriceInput"
             type="number"
-            placeholder="테스트 가격 입력"
+            id="buyPrice"
+            placeholder="매수가격"
         >
 
-        <button
-            type="button"
-            onclick="runTestPrice()"
+        <input
+            type="number"
+            id="buyQuantity"
+            placeholder="매수 주식수"
         >
-            ▶ 가격 테스트
-     <div class="test-price-box">
 
-    <input
-        id="testPriceInput"
-        type="number"
-        placeholder="테스트 가격 입력"
-    >
+    </div>
 
     <button
-        type="button"
-        onclick="runTestPrice()"
+        class="buy-btn"
+        onclick="addBuy()"
     >
-        ▶ 가격 테스트
+        매수 입력
     </button>
 
     <button
-        type="button"
-        onclick="runFullStrategyTest()"
+        class="reset-btn"
+        onclick="resetAll()"
     >
-        🧪 전체 전략 테스트
+        전체 초기화
     </button>
 
-    <button
-        type="button"
-        onclick="resetTestMode()"
-    >
-        🔄 테스트 초기화
-    </button>
+
+    <div class="result">
+
+        <div class="row">
+            <span>총 매수금액</span>
+            <strong id="totalAmount">0원</strong>
+        </div>
+
+        <div class="row">
+            <span>총 보유주식</span>
+            <strong id="totalQuantity">0주</strong>
+        </div>
+
+        <div class="row">
+            <span>평균매수가</span>
+            <strong id="averagePrice">0원</strong>
+        </div>
+
+        <div class="row">
+            <span>+5% 목표매도가</span>
+            <strong id="targetPrice">0원</strong>
+        </div>
+
+        <div class="row highlight">
+            <span>+5% 예상수익금</span>
+            <strong id="profit">0원</strong>
+        </div>
+
+    </div>
+
+
+    <div class="history">
+
+        <h3>매수 내역</h3>
+
+        <div id="historyList"></div>
+
+    </div>
 
 </div>
 
 
-    <div class="test-status">
+<script>
 
-        <strong>
-            테스트 상태
-        </strong>
+let totalAmount = 0;
+let totalQuantity = 0;
+let round = 0;
 
-        <div id="testStatus">
-            테스트를 시작하세요.
-        </div>
+let history = [];
 
-    </div>
 
+function addBuy() {
 
-    <div class="test-result">
+    const price =
+        Number(
+            document.getElementById("buyPrice").value
+        );
 
-        <h3>
-            테스트 결과
-        </h3>
+    const quantity =
+        Number(
+            document.getElementById("buyQuantity").value
+        );
 
-        <div id="testResult">
-            -
-        </div>
 
-    </div>
+    if (
+        price <= 0 ||
+        quantity <= 0
+    ) {
 
-</section>
-<section class="trading-panel">
+        alert(
+            "매수가격과 주식수를 입력하세요."
+        );
 
+        return;
 
-    <h2>
-        🚀 실전 매매 시스템
-    </h2>
+    }
 
 
-    <div class="trading-description">
+    round++;
 
-        <p>
-            첫 거래는 무조건 30주 매수합니다.
-        </p>
 
-        <p>
-            현재가가 기준가격보다 낮으면 20주 추가매수합니다.
-        </p>
+    const amount =
+        price * quantity;
 
-        <p>
-            현재가가 기준가격과 같으면 15주 추가매수합니다.
-        </p>
 
-        <p>
-            현재가가 기준가격보다 높으면 매수하지 않습니다.
-        </p>
+    totalAmount += amount;
 
-        <p>
-            평균매수가 대비 +5% 상승하면 전량매도합니다.
-        </p>
+    totalQuantity += quantity;
 
-    </div>
 
+    history.push({
 
+        round: round,
 
-    <!-- =====================================
-         매매 정보
-    ====================================== -->
+        price: price,
 
-    <div class="trading-grid">
+        quantity: quantity,
 
+        amount: amount
 
-        <div class="trading-box">
+    });
 
-            <span>
-                현재가
-            </span>
 
-            <strong id="tradeCurrentPrice">
-                -
-            </strong>
+    updateDisplay();
 
-        </div>
 
+    document.getElementById(
+        "buyPrice"
+    ).value = "";
 
-        <div class="trading-box">
+    document.getElementById(
+        "buyQuantity"
+    ).value = "";
 
-            <span>
-                기준가격
-            </span>
+}
 
-            <strong id="tradeBasePrice">
-                -
-            </strong>
 
-        </div>
+function updateDisplay() {
 
 
-        <div class="trading-box">
+    const averagePrice =
+        totalQuantity > 0
+        ? totalAmount / totalQuantity
+        : 0;
 
-            <span>
-                평균매수가
-            </span>
 
-            <strong id="tradeAveragePrice">
-                -
-            </strong>
+    const targetPrice =
+        averagePrice * 1.05;
 
-        </div>
 
+    const profit =
+        (targetPrice * totalQuantity)
+        - totalAmount;
 
-        <div class="trading-box">
 
-            <span>
-                보유주식
-            </span>
+    document.getElementById(
+        "totalAmount"
+    ).innerText =
+        formatMoney(totalAmount);
 
-            <strong id="tradeShares">
-                0주
-            </strong>
 
-        </div>
+    document.getElementById(
+        "totalQuantity"
+    ).innerText =
+        totalQuantity.toLocaleString()
+        + "주";
 
 
-        <div class="trading-box target-box">
+    document.getElementById(
+        "averagePrice"
+    ).innerText =
+        formatMoney(averagePrice);
 
-            <span>
-                목표매도가 +5%
-            </span>
 
-            <strong id="tradeTargetPrice">
-                -
-            </strong>
+    document.getElementById(
+        "targetPrice"
+    ).innerText =
+        formatMoney(targetPrice);
 
-        </div>
 
+    document.getElementById(
+        "profit"
+    ).innerText =
+        formatMoney(profit);
 
-    </div>
 
+    updateHistory();
 
+}
 
-    <!-- =====================================
-         매매 판단
-    ====================================== -->
 
-    <div class="trade-signal">
+function updateHistory() {
 
-        <div class="signal-title">
-            현재 매매판단
-        </div>
+    const list =
+        document.getElementById(
+            "historyList"
+        );
 
-        <div
-            id="tradeSignal"
-            class="signal-value"
-        >
-            첫 거래 → 30주 매수
-        </div>
 
-    </div>
+    list.innerHTML = "";
 
 
+    history.forEach(item => {
 
-    <!-- =====================================
-         매매 상세
-    ====================================== -->
 
-    <div class="trade-detail">
+        const div =
+            document.createElement(
+                "div"
+            );
 
 
-        <div>
+        div.className =
+            "history-item";
 
-            다음 매수수량:
 
-            <strong id="nextBuyShares">
-                30주
-            </strong>
-
-        </div>
-
-
-        <div>
-
-            매도 예정수량:
-
-            <strong id="sellShares">
-                0주
-            </strong>
-
-        </div>
-
-
-    </div>
-
-
-
-    <!-- =====================================
-         매매 버튼
-    ====================================== -->
-
-    <div class="trade-buttons">
-
-
-        <button
-            type="button"
-            onclick="executeTradingDecision()"
-        >
-            📊 매매 판단
-        </button>
-
-
-        <button
-            type="button"
-            onclick="executeBuy()"
-        >
-            🟢 매수 실행
-        </button>
-
-
-        <button
-            type="button"
-            onclick="executeSellAll()"
-        >
-            🔵 전량 매도
-        </button>
-
-
-    </div>
-
-
-</section>
-
-
-
-<!-- =====================================
-     매매 규칙
-====================================== -->
-
-<section class="rule-section">
-
-
-    <h2>
-        📋 실전 매매 규칙
-    </h2>
-
-
-    <div class="rule-list">
-
-
-        <div class="rule-item">
+        div.innerHTML = `
 
             <strong>
-                1회차
+                ${item.round}회차
             </strong>
 
-            <span>
-                무조건 30주 매수
-            </span>
+            <br>
 
-        </div>
+            매수가:
+            ${formatMoney(item.price)}
 
+            <br>
 
-        <div class="rule-item">
+            수량:
+            ${item.quantity.toLocaleString()}주
 
-            <strong>
-                현재가 &lt; 기준가격
-            </strong>
+            <br>
 
-            <span>
-                20주 추가매수
-            </span>
+            매수금액:
+            ${formatMoney(item.amount)}
 
-        </div>
+        `;
 
 
-        <div class="rule-item">
+        list.appendChild(div);
 
-            <strong>
-                현재가 = 기준가격
-            </strong>
+    });
 
-            <span>
-                15주 추가매수
-            </span>
-
-        </div>
+}
 
 
-        <div class="rule-item">
+function resetAll() {
 
-            <strong>
-                현재가 &gt; 기준가격
-            </strong>
+    if (
+        !confirm(
+            "모든 매수 내역을 초기화할까요?"
+        )
+    ) {
 
-            <span>
-                매수하지 않음
-            </span>
+        return;
 
-        </div>
-
-
-        <div class="rule-item">
-
-            <strong>
-                평균매수가 +5%
-            </strong>
-
-            <span>
-                보유주식 전량매도
-            </span>
-
-        </div>
+    }
 
 
-        <div class="rule-item">
+    totalAmount = 0;
 
-            <strong>
-                전량매도 완료
-            </strong>
+    totalQuantity = 0;
 
-            <span>
-                다음 거래일부터 30주 재시작
-            </span>
+    round = 0;
 
-        </div>
+    history = [];
 
 
-    </div>
+    updateDisplay();
+
+}
 
 
-</section>
+function formatMoney(value) {
+
+    return Math.round(value)
+        .toLocaleString()
+        + "원";
+
+}
 
 
+updateDisplay();
 
-<!-- =====================================
-     시스템 상태
-====================================== -->
-
-<section class="status-section">
-
-
-    <div>
-
-        API 상태:
-
-        <strong id="apiStatus">
-            대기
-        </strong>
-
-    </div>
-
-
-    <div>
-
-        데이터 상태:
-
-        <strong id="dataStatus">
-            대기
-        </strong>
-
-    </div>
-
-
-</section>
-```
-
-</div>
-
-<!-- =====================================
-     JavaScript
-====================================== -->
-
-<script
-    src="script.js"
-></script>
+</script>
 
 </body>
-
 </html>
