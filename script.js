@@ -1,7 +1,8 @@
 /* =====================================
    V12 Ultimate
-   AI 주식 단타 분석 + 실전 매매 시스템
-   + 테스트 모드
+   AI 주식 단타 분석
+   실전 매매 + 테스트 모드
+   실시간 자동 시뮬레이션 통합본
 ===================================== */
 
 
@@ -44,7 +45,7 @@ let tradingState = {
 
 
 /* =====================================
-   매매 상태 저장 키
+   실전 매매 저장 키
 ===================================== */
 
 const TRADING_STORAGE_KEY =
@@ -52,8 +53,7 @@ const TRADING_STORAGE_KEY =
 
 
 /* =====================================
-   테스트 상태
-   실제 매매와 완전히 분리
+   테스트 모드 상태
 ===================================== */
 
 let testState = {
@@ -76,6 +76,43 @@ let testState = {
 
 
 /* =====================================
+   실시간 자동 시뮬레이션 상태
+===================================== */
+
+let autoSimulation = {
+
+    running: false,
+
+    timer: null,
+
+    code: "",
+
+    name: "",
+
+    lastPrice: 0,
+
+    checkInterval: 5000,
+
+    totalShares: 0,
+
+    totalCost: 0,
+
+    averagePrice: 0,
+
+    basePrice: 0,
+
+    targetPrice: 0,
+
+    tradeCount: 0,
+
+    lastAction: "대기",
+
+    startedAt: null
+
+};
+
+
+/* =====================================
    페이지 시작
 ===================================== */
 
@@ -89,7 +126,13 @@ document.addEventListener(
 
         setupSearch();
 
-        updateTradingUIFromState();
+        updateTradingUI(
+            0
+        );
+
+        console.log(
+            "V12 Ultimate 시작"
+        );
 
     }
 );
@@ -298,6 +341,7 @@ function autoComplete() {
 
 
             div.textContent =
+
                 stock.name
                 +
                 " ("
@@ -339,9 +383,7 @@ function autoComplete() {
    종목 찾기
 ===================================== */
 
-function findStock(
-    input
-) {
+function findStock(input) {
 
     const keyword =
         String(
@@ -514,6 +556,22 @@ async function searchStock() {
         );
 
 
+        /*
+           실시간 자동 시뮬레이션에서
+           사용할 종목 저장
+        */
+
+        autoSimulation.code =
+            code;
+
+
+        autoSimulation.name =
+
+            stock
+                ? stock.name
+                : data.name || code;
+
+
         setApiStatus(
             "정상"
         );
@@ -551,7 +609,7 @@ async function searchStock() {
 
 
 /* =====================================
-   종목 데이터 화면 표시
+   종목 데이터 표시
 ===================================== */
 
 function displayStock(
@@ -595,12 +653,8 @@ function displayStock(
         stockName.textContent =
 
             stock
-
                 ? stock.name
-
-                : data.name
-                    ||
-                    "종목";
+                : data.name || "종목";
 
     }
 
@@ -616,12 +670,8 @@ function displayStock(
         stockCode.textContent =
 
             stock
-
                 ? stock.code
-
-                : data.code
-                    ||
-                    "-";
+                : data.code || "-";
 
     }
 
@@ -814,7 +864,7 @@ function updateMA(
 
 
 /* =====================================
-   AI 단타 분석
+   AI 분석
 ===================================== */
 
 function analyzeStock(
@@ -909,8 +959,7 @@ function analyzeStock(
     }
 
 
-    let recommendation =
-        "";
+    let recommendation;
 
 
     if (
@@ -1073,12 +1122,10 @@ function drawChart(
                 type:
                     "line",
 
-
                 data:
                     {
 
                         labels,
-
 
                         datasets:
                             [
@@ -1088,18 +1135,14 @@ function drawChart(
                                     label:
                                         "종가",
 
-
                                     data:
                                         prices,
-
 
                                     borderWidth:
                                         2,
 
-
                                     tension:
                                         0.2,
-
 
                                     fill:
                                         false
@@ -1110,17 +1153,14 @@ function drawChart(
 
                     },
 
-
                 options:
                     {
 
                         responsive:
                             true,
 
-
                         maintainAspectRatio:
                             false,
-
 
                         scales:
                             {
@@ -1144,7 +1184,7 @@ function drawChart(
 
 
 /* =====================================
-   매매 상태 저장
+   실전 매매 상태 저장
 ===================================== */
 
 function saveTradingState() {
@@ -1161,7 +1201,6 @@ function saveTradingState() {
 
         );
 
-
     } catch (error) {
 
         console.error(
@@ -1175,7 +1214,7 @@ function saveTradingState() {
 
 
 /* =====================================
-   매매 상태 불러오기
+   실전 매매 상태 불러오기
 ===================================== */
 
 function loadTradingState() {
@@ -1183,11 +1222,8 @@ function loadTradingState() {
     try {
 
         const savedState =
-
             localStorage.getItem(
-
                 TRADING_STORAGE_KEY
-
             );
 
 
@@ -1199,7 +1235,6 @@ function loadTradingState() {
 
 
         const parsedState =
-
             JSON.parse(
                 savedState
             );
@@ -1219,55 +1254,39 @@ function loadTradingState() {
                         parsedState.started
                     ),
 
-
                 totalShares:
                     Number(
                         parsedState.totalShares
-                        ||
-                        0
+                        || 0
                     ),
-
 
                 totalCost:
                     Number(
                         parsedState.totalCost
-                        ||
-                        0
+                        || 0
                     ),
-
 
                 averagePrice:
                     Number(
                         parsedState.averagePrice
-                        ||
-                        0
+                        || 0
                     ),
-
 
                 basePrice:
                     Number(
                         parsedState.basePrice
-                        ||
-                        0
+                        || 0
                     ),
-
 
                 targetPrice:
                     Number(
                         parsedState.targetPrice
-                        ||
-                        0
+                        || 0
                     )
 
             };
 
         }
-
-
-        console.log(
-            "기존 매매 상태 복구:",
-            tradingState
-        );
 
 
     } catch (error) {
@@ -1283,7 +1302,7 @@ function loadTradingState() {
 
 
 /* =====================================
-   평균매수가 계산
+   평균매수가
 ===================================== */
 
 function calculateTradingAverage() {
@@ -1310,7 +1329,7 @@ function calculateTradingAverage() {
 
 
 /* =====================================
-   목표매도가 계산
+   목표매도가
 ===================================== */
 
 function calculateTradingTarget() {
@@ -1337,7 +1356,7 @@ function calculateTradingTarget() {
 
 
 /* =====================================
-   매수 처리
+   실전 매수
 ===================================== */
 
 function tradingBuy(
@@ -1368,15 +1387,11 @@ function tradingBuy(
     }
 
 
-    const buyAmount =
+    tradingState.totalCost +=
 
         currentPrice
         *
         buyShares;
-
-
-    tradingState.totalCost +=
-        buyAmount;
 
 
     tradingState.totalShares +=
@@ -1390,13 +1405,7 @@ function tradingBuy(
     calculateTradingAverage();
 
 
-    /*
-       매수 후 평균매수가를
-       새로운 기준가격으로 설정
-    */
-
     tradingState.basePrice =
-
         tradingState.averagePrice;
 
 
@@ -1412,18 +1421,12 @@ function tradingBuy(
 
 
 /* =====================================
-   전량 매도 처리
+   실전 전량매도
 ===================================== */
 
 function tradingSellAll(
     currentPrice
 ) {
-
-    currentPrice =
-        Number(
-            currentPrice
-        );
-
 
     if (
         currentPrice <= 0
@@ -1436,73 +1439,44 @@ function tradingSellAll(
     }
 
 
-    const sellShares =
-        tradingState.totalShares;
-
-
-    const sellAmount =
-        currentPrice
-        *
-        sellShares;
-
-
-    const profit =
-
-        sellAmount
-        -
-        tradingState.totalCost;
-
-
     const result = {
 
         sellShares:
-
-            sellShares,
-
+            tradingState.totalShares,
 
         sellAmount:
-
-            sellAmount,
-
+            currentPrice
+            *
+            tradingState.totalShares,
 
         profit:
-
-            profit
+            (
+                currentPrice
+                *
+                tradingState.totalShares
+            )
+            -
+            tradingState.totalCost
 
     };
 
-
-    console.log(
-        "전량매도:",
-        result
-    );
-
-
-    /*
-       매도 후 새로운 사이클
-    */
 
     tradingState = {
 
         started:
             false,
 
-
         totalShares:
             0,
-
 
         totalCost:
             0,
 
-
         averagePrice:
             0,
 
-
         basePrice:
             0,
-
 
         targetPrice:
             0
@@ -1519,7 +1493,7 @@ function tradingSellAll(
 
 
 /* =====================================
-   매매 신호 판단
+   실전 매매 판단
 ===================================== */
 
 function getTradingSignal(
@@ -1532,11 +1506,6 @@ function getTradingSignal(
         );
 
 
-    /*
-       1회차
-       무조건 30주
-    */
-
     if (
         !tradingState.started
         ||
@@ -1548,10 +1517,8 @@ function getTradingSignal(
             action:
                 "FIRST_BUY",
 
-
             shares:
                 30,
-
 
             message:
                 "🟢 1회차 → 무조건 30주 매수"
@@ -1560,11 +1527,6 @@ function getTradingSignal(
 
     }
 
-
-    /*
-       평균매수가 +5%
-       전량매도
-    */
 
     if (
 
@@ -1582,10 +1544,8 @@ function getTradingSignal(
             action:
                 "SELL_ALL",
 
-
             shares:
                 tradingState.totalShares,
-
 
             message:
                 "🔵 평균매수가 +5% 도달 → 전량매도"
@@ -1594,11 +1554,6 @@ function getTradingSignal(
 
     }
 
-
-    /*
-       기준가격보다 낮음
-       20주 추가매수
-    */
 
     if (
 
@@ -1612,10 +1567,8 @@ function getTradingSignal(
             action:
                 "BUY_20",
 
-
             shares:
                 20,
-
 
             message:
                 "🔴 현재가 < 기준가격 → 20주 추가매수"
@@ -1625,20 +1578,10 @@ function getTradingSignal(
     }
 
 
-    /*
-       기준가격과 같음
-       15주 추가매수
-    */
-
     if (
 
-        Math.abs(
-            currentPrice
-            -
-            tradingState.basePrice
-        )
-        <
-        0.01
+        currentPrice ===
+        tradingState.basePrice
 
     ) {
 
@@ -1647,10 +1590,8 @@ function getTradingSignal(
             action:
                 "BUY_15",
 
-
             shares:
                 15,
-
 
             message:
                 "🟠 현재가 = 기준가격 → 15주 추가매수"
@@ -1660,20 +1601,13 @@ function getTradingSignal(
     }
 
 
-    /*
-       기준가격보다 높음
-       매수하지 않음
-    */
-
     return {
 
         action:
             "WAIT",
 
-
         shares:
             0,
-
 
         message:
             "⚪ 현재가 > 기준가격 → 매수하지 않음"
@@ -1684,7 +1618,7 @@ function getTradingSignal(
 
 
 /* =====================================
-   현재가 읽기
+   현재가 가져오기
 ===================================== */
 
 function getCurrentPriceFromScreen() {
@@ -1716,7 +1650,7 @@ function getCurrentPriceFromScreen() {
 
 
 /* =====================================
-   매매 판단 버튼
+   실전 매매 판단 버튼
 ===================================== */
 
 function executeTradingDecision() {
@@ -1775,7 +1709,7 @@ function executeTradingDecision() {
 
 
 /* =====================================
-   매수 실행 버튼
+   실전 매수 실행
 ===================================== */
 
 function executeBuy() {
@@ -1803,29 +1737,19 @@ function executeBuy() {
         );
 
 
-    /*
-       목표가 도달
-    */
-
     if (
         signal.action ===
         "SELL_ALL"
     ) {
 
         alert(
-            "평균매수가 대비 +5%에 도달했습니다.\n"
-            +
-            "🔵 전량매도를 실행하세요."
+            "평균매수가 대비 +5% 도달\n전량매도 대상입니다."
         );
 
         return;
 
     }
 
-
-    /*
-       매수 대기
-    */
 
     if (
         signal.action ===
@@ -1833,18 +1757,12 @@ function executeBuy() {
     ) {
 
         alert(
-            "현재가가 기준가격보다 높습니다.\n\n"
-            +
-            "이번 매수는 건너뜁니다."
+            "현재가가 기준가격보다 높습니다.\n매수하지 않습니다."
         );
 
         return;
 
     }
-
-
-    const buyShares =
-        signal.shares;
 
 
     const confirmed =
@@ -1860,7 +1778,7 @@ function executeBuy() {
             +
             "매수수량: "
             +
-            buyShares
+            signal.shares
             +
             "주\n\n"
             +
@@ -1876,21 +1794,13 @@ function executeBuy() {
     }
 
 
-    const success =
-        tradingBuy(
+    tradingBuy(
 
-            currentPrice,
+        currentPrice,
 
-            buyShares
+        signal.shares
 
-        );
-
-
-    if (!success) {
-
-        return;
-
-    }
+    );
 
 
     updateTradingUI(
@@ -1899,12 +1809,11 @@ function executeBuy() {
 
 
     alert(
-
         "🟢 매수 완료\n\n"
         +
         "매수수량: "
         +
-        buyShares
+        signal.shares
         +
         "주\n"
         +
@@ -1943,30 +1852,16 @@ function executeBuy() {
         )
         +
         "원"
-
     );
 
 }
 
 
 /* =====================================
-   전량매도 버튼
+   실전 전량매도
 ===================================== */
 
 function executeSellAll() {
-
-    if (
-        tradingState.totalShares <= 0
-    ) {
-
-        alert(
-            "현재 보유주식이 없습니다."
-        );
-
-        return;
-
-    }
-
 
     const currentPrice =
         getCurrentPriceFromScreen();
@@ -1985,29 +1880,13 @@ function executeSellAll() {
     }
 
 
-    const confirmed =
-        confirm(
+    if (
+        tradingState.totalShares <= 0
+    ) {
 
-            "현재가: "
-            +
-            currentPrice.toLocaleString(
-                "ko-KR"
-            )
-            +
-            "원\n\n"
-            +
-            "보유주식: "
-            +
-            tradingState.totalShares
-            +
-            "주\n\n"
-            +
-            "전량매도하시겠습니까?"
-
+        alert(
+            "보유주식이 없습니다."
         );
-
-
-    if (!confirmed) {
 
         return;
 
@@ -2060,11 +1939,7 @@ function executeSellAll() {
             "ko-KR"
         )
         +
-        "원\n\n"
-        +
-        "다음 거래부터 새로운 1회차\n"
-        +
-        "30주 매수를 시작합니다."
+        "원"
 
     );
 
@@ -2088,8 +1963,6 @@ function updateTradingUI(
     if (
         currentPrice <= 0
     ) {
-
-        updateTradingUIFromState();
 
         return;
 
@@ -2121,21 +1994,6 @@ function updateTradingUI(
     }
 
 
-    updateTradingUIFromState(
-        signal
-    );
-
-}
-
-
-/* =====================================
-   저장된 상태만 화면에 표시
-===================================== */
-
-function updateTradingUIFromState(
-    signal = null
-) {
-
     const baseElement =
         document.getElementById(
             "tradeBasePrice"
@@ -2150,8 +2008,7 @@ function updateTradingUIFromState(
 
                 ? Math.round(
                     tradingState.basePrice
-                )
-                .toLocaleString(
+                ).toLocaleString(
                     "ko-KR"
                 )
                 +
@@ -2176,8 +2033,7 @@ function updateTradingUIFromState(
 
                 ? Math.round(
                     tradingState.averagePrice
-                )
-                .toLocaleString(
+                ).toLocaleString(
                     "ko-KR"
                 )
                 +
@@ -2222,53 +2078,13 @@ function updateTradingUIFromState(
 
                 ? Math.round(
                     tradingState.targetPrice
-                )
-                .toLocaleString(
+                ).toLocaleString(
                     "ko-KR"
                 )
                 +
                 "원"
 
                 : "-";
-
-    }
-
-
-    if (!signal) {
-
-        if (
-            tradingState.totalShares <= 0
-        ) {
-
-            signal = {
-
-                action:
-                    "FIRST_BUY",
-
-                shares:
-                    30,
-
-                message:
-                    "🟢 1회차 → 무조건 30주 매수"
-
-            };
-
-        } else {
-
-            signal = {
-
-                action:
-                    "WAIT",
-
-                shares:
-                    0,
-
-                message:
-                    "현재가를 조회하면 매매신호가 표시됩니다."
-
-            };
-
-        }
 
     }
 
@@ -2300,8 +2116,8 @@ function updateTradingUIFromState(
             signal.shares > 0
 
                 ? signal.shares
-                    +
-                    "주"
+                +
+                "주"
 
                 : "없음";
 
@@ -2322,8 +2138,8 @@ function updateTradingUIFromState(
             "SELL_ALL"
 
                 ? tradingState.totalShares
-                    +
-                    "주"
+                +
+                "주"
 
                 : "0주";
 
@@ -2332,10 +2148,9 @@ function updateTradingUIFromState(
 }
 
 
-/* =====================================
+/* =================================================
    테스트 모드
-   실제 주문 없음
-===================================== */
+================================================= */
 
 
 /* =====================================
@@ -2402,20 +2217,9 @@ function testBuy(
     shares
 ) {
 
-    price =
-        Number(
-            price
-        );
-
-
-    shares =
-        Number(
-            shares
-        );
-
-
     const amount =
-        price *
+        price
+        *
         shares;
 
 
@@ -2434,19 +2238,9 @@ function testBuy(
         testState.totalShares;
 
 
-    /*
-       평균매수가를
-       새로운 기준가격으로 설정
-    */
-
     testState.basePrice =
-
         testState.averagePrice;
 
-
-    /*
-       평균매수가 +5%
-    */
 
     testState.targetPrice =
 
@@ -2457,20 +2251,14 @@ function testBuy(
 
     testState.step++;
 
-    testState.active =
-        true;
-
 
     return {
 
-        price:
-            price,
+        price,
 
-        shares:
-            shares,
+        shares,
 
-        amount:
-            amount,
+        amount,
 
         averagePrice:
             testState.averagePrice,
@@ -2494,18 +2282,13 @@ function testSellAll(
     price
 ) {
 
-    price =
-        Number(
-            price
-        );
-
-
     const shares =
         testState.totalShares;
 
 
     const sellAmount =
-        price *
+        price
+        *
         shares;
 
 
@@ -2518,14 +2301,11 @@ function testSellAll(
 
     return {
 
-        shares:
-            shares,
+        shares,
 
-        sellAmount:
-            sellAmount,
+        sellAmount,
 
-        profit:
-            profit
+        profit
 
     };
 
@@ -2570,24 +2350,22 @@ function runTestPrice() {
     }
 
 
-    /*
-       1회차
-       30주
-    */
-
     if (
         !testState.active
     ) {
 
-        const result =
+        testState.active =
+            true;
 
+
+        const result =
             testBuy(
                 price,
                 30
             );
 
 
-        showTestBuyResult(
+        showTestResult(
 
             "🟢 1회차 → 30주 매수",
 
@@ -2601,11 +2379,6 @@ function runTestPrice() {
     }
 
 
-    /*
-       평균매수가 +5%
-       전량매도
-    */
-
     if (
 
         testState.targetPrice > 0
@@ -2618,7 +2391,6 @@ function runTestPrice() {
     ) {
 
         const result =
-
             testSellAll(
                 price
             );
@@ -2634,11 +2406,6 @@ function runTestPrice() {
     }
 
 
-    /*
-       기준가격보다 낮음
-       20주 추가매수
-    */
-
     if (
 
         price <
@@ -2647,16 +2414,15 @@ function runTestPrice() {
     ) {
 
         const result =
-
             testBuy(
                 price,
                 20
             );
 
 
-        showTestBuyResult(
+        showTestResult(
 
-            "🔴 기준가격보다 낮음 → 20주 추가매수",
+            "🔴 현재가 < 기준가격 → 20주 추가매수",
 
             result
 
@@ -2668,36 +2434,23 @@ function runTestPrice() {
     }
 
 
-    /*
-       기준가격과 같음
-       15주 추가매수
-    */
-
     if (
 
-        Math.abs(
-
-            price
-            -
-            testState.basePrice
-
-        )
-        <
-        0.01
+        price ===
+        testState.basePrice
 
     ) {
 
         const result =
-
             testBuy(
                 price,
                 15
             );
 
 
-        showTestBuyResult(
+        showTestResult(
 
-            "🟠 기준가격과 같음 → 15주 추가매수",
+            "🟠 현재가 = 기준가격 → 15주 추가매수",
 
             result
 
@@ -2708,11 +2461,6 @@ function runTestPrice() {
 
     }
 
-
-    /*
-       기준가격보다 높음
-       대기
-    */
 
     showTestWait(
         price
@@ -2722,10 +2470,10 @@ function runTestPrice() {
 
 
 /* =====================================
-   테스트 매수 결과 표시
+   테스트 결과
 ===================================== */
 
-function showTestBuyResult(
+function showTestResult(
     title,
     result
 ) {
@@ -2750,100 +2498,85 @@ function showTestBuyResult(
     }
 
 
-    if (!output) {
+    if (output) {
 
-        return;
+        output.innerHTML =
+
+            "<p><strong>"
+            +
+            title
+            +
+            "</strong></p>"
+
+            +
+
+            "<p>매수가: "
+            +
+            result.price.toLocaleString(
+                "ko-KR"
+            )
+            +
+            "원</p>"
+
+            +
+
+            "<p>매수수량: "
+            +
+            result.shares
+            +
+            "주</p>"
+
+            +
+
+            "<p>총 보유주식: "
+            +
+            testState.totalShares
+            +
+            "주</p>"
+
+            +
+
+            "<p>평균매수가: "
+            +
+            Math.round(
+                result.averagePrice
+            ).toLocaleString(
+                "ko-KR"
+            )
+            +
+            "원</p>"
+
+            +
+
+            "<p>기준가격: "
+            +
+            Math.round(
+                result.basePrice
+            ).toLocaleString(
+                "ko-KR"
+            )
+            +
+            "원</p>"
+
+            +
+
+            "<p>+5% 목표가: "
+            +
+            Math.round(
+                result.targetPrice
+            ).toLocaleString(
+                "ko-KR"
+            )
+            +
+            "원</p>";
 
     }
-
-
-    output.innerHTML =
-
-        "<p><strong>"
-        +
-        title
-        +
-        "</strong></p>"
-
-        +
-
-        "<p>매수가: "
-        +
-        result.price.toLocaleString(
-            "ko-KR"
-        )
-        +
-        "원</p>"
-
-        +
-
-        "<p>매수수량: "
-        +
-        result.shares
-        +
-        "주</p>"
-
-        +
-
-        "<p>총 보유주식: "
-        +
-        testState.totalShares
-        +
-        "주</p>"
-
-        +
-
-        "<p>총 매수금액: "
-        +
-        Math.round(
-            testState.totalCost
-        ).toLocaleString(
-            "ko-KR"
-        )
-        +
-        "원</p>"
-
-        +
-
-        "<p>평균매수가: "
-        +
-        Math.round(
-            testState.averagePrice
-        ).toLocaleString(
-            "ko-KR"
-        )
-        +
-        "원</p>"
-
-        +
-
-        "<p>새 기준가격: "
-        +
-        Math.round(
-            testState.basePrice
-        ).toLocaleString(
-            "ko-KR"
-        )
-        +
-        "원</p>"
-
-        +
-
-        "<p>+5% 목표매도가: "
-        +
-        Math.round(
-            testState.targetPrice
-        ).toLocaleString(
-            "ko-KR"
-        )
-        +
-        "원</p>";
 
 }
 
 
 /* =====================================
-   테스트 대기 표시
+   테스트 대기
 ===================================== */
 
 function showTestWait(
@@ -2874,7 +2607,7 @@ function showTestWait(
 
         output.innerHTML =
 
-            "<p>테스트 가격: "
+            "<p>현재 테스트 가격: "
             +
             price.toLocaleString(
                 "ko-KR"
@@ -2884,7 +2617,7 @@ function showTestWait(
 
             +
 
-            "<p>현재 기준가격: "
+            "<p>기준가격: "
             +
             Math.round(
                 testState.basePrice
@@ -2896,7 +2629,7 @@ function showTestWait(
 
             +
 
-            "<p><strong>매수하지 않고 대기합니다.</strong></p>";
+            "<p><strong>매수하지 않고 대기</strong></p>";
 
     }
 
@@ -2926,7 +2659,7 @@ function showTestSellResult(
     if (status) {
 
         status.textContent =
-            "🎉 +5% 도달 → 전량매도 성공";
+            "🔵 +5% 도달 → 전량매도 성공";
 
     }
 
@@ -2935,7 +2668,7 @@ function showTestSellResult(
 
         output.innerHTML =
 
-            "<h3>🎉 테스트 성공</h3>"
+            "<h3>🎉 테스트 완료</h3>"
 
             +
 
@@ -2971,19 +2704,21 @@ function showTestSellResult(
 
             +
 
-            "<hr>"
-
-            +
-
-            "<p><strong>✅ 30주 → 20주 → 15주 → +5% 전량매도 검증 완료</strong></p>";
+            "<p><strong>✅ 전략 테스트 성공</strong></p>";
 
     }
 
 
-    /*
-       테스트 완료
-       다음 테스트는 30주부터 시작
-    */
+    resetTestStateOnly();
+
+}
+
+
+/* =====================================
+   테스트 상태만 초기화
+===================================== */
+
+function resetTestStateOnly() {
 
     testState = {
 
@@ -3007,7 +2742,7 @@ function showTestSellResult(
 
 
 /* =====================================
-   전체 전략 자동 테스트
+   전체 전략 테스트
 ===================================== */
 
 function runFullStrategyTest() {
@@ -3015,74 +2750,48 @@ function runFullStrategyTest() {
     resetTestMode();
 
 
-    /*
-       1회차
-       10,000원 × 30주
-    */
-
     const price1 =
         10000;
 
 
     const result1 =
-
         testBuy(
             price1,
             30
         );
 
 
-    /*
-       2회차
-       9,000원 × 20주
-    */
+    testState.active =
+        true;
+
 
     const price2 =
         9000;
 
 
     const result2 =
-
         testBuy(
             price2,
             20
         );
 
 
-    /*
-       3회차
-       새로운 기준가격과 같은 가격
-       → 15주
-    */
-
     const price3 =
-
         testState.basePrice;
 
 
     const result3 =
-
         testBuy(
             price3,
             15
         );
 
 
-    /*
-       최종 목표가
-    */
-
     const target =
-
         testState.targetPrice;
 
 
-    /*
-       전량매도
-    */
-
     const sell =
-
         testSellAll(
             target
         );
@@ -3108,124 +2817,911 @@ function runFullStrategyTest() {
     }
 
 
-    if (!output) {
+    if (output) {
+
+        output.innerHTML =
+
+            "<h3>🧪 자동 테스트 결과</h3>"
+
+            +
+
+            "<p>① 30주 × "
+            +
+            price1.toLocaleString(
+                "ko-KR"
+            )
+            +
+            "원</p>"
+
+            +
+
+            "<p>② 20주 × "
+            +
+            price2.toLocaleString(
+                "ko-KR"
+            )
+            +
+            "원</p>"
+
+            +
+
+            "<p>③ 15주 × "
+            +
+            Math.round(
+                price3
+            ).toLocaleString(
+                "ko-KR"
+            )
+            +
+            "원</p>"
+
+            +
+
+            "<hr>"
+
+            +
+
+            "<p>총 보유주식: "
+            +
+            (
+                result1.shares
+                +
+                result2.shares
+                +
+                result3.shares
+            )
+            +
+            "주</p>"
+
+            +
+
+            "<p>최종 평균매수가: "
+            +
+            Math.round(
+                testState.averagePrice
+            ).toLocaleString(
+                "ko-KR"
+            )
+            +
+            "원</p>"
+
+            +
+
+            "<p>+5% 목표가: "
+            +
+            Math.round(
+                testState.targetPrice
+            ).toLocaleString(
+                "ko-KR"
+            )
+            +
+            "원</p>"
+
+            +
+
+            "<p>전량매도: "
+            +
+            sell.shares
+            +
+            "주</p>"
+
+            +
+
+            "<p>실현손익: "
+            +
+            Math.round(
+                sell.profit
+            ).toLocaleString(
+                "ko-KR"
+            )
+            +
+            "원</p>"
+
+            +
+
+            "<hr>"
+
+            +
+
+            "<h3>✅ 전략 테스트 성공</h3>";
+
+    }
+
+
+    resetTestStateOnly();
+
+}
+
+
+/* =================================================
+   실시간 자동 시뮬레이션
+================================================= */
+
+
+/* =====================================
+   현재 종목 가격 재조회
+===================================== */
+
+async function fetchSimulationPrice() {
+
+    if (
+        !autoSimulation.code
+    ) {
+
+        return null;
+
+    }
+
+
+    try {
+
+        const response =
+            await fetch(
+
+                API_SERVER
+                +
+                "/api/stock/"
+                +
+                autoSimulation.code
+                +
+                "?t="
+                +
+                Date.now()
+
+            );
+
+
+        if (!response.ok) {
+
+            throw new Error(
+                "실시간 가격 조회 실패"
+            );
+
+        }
+
+
+        const data =
+            await response.json();
+
+
+        return Number(
+            data.price || 0
+        );
+
+
+    } catch (error) {
+
+        console.error(
+            "시뮬레이션 가격 조회 오류:",
+            error
+        );
+
+
+        return null;
+
+    }
+
+}
+
+
+/* =====================================
+   실시간 자동 시뮬레이션 시작
+===================================== */
+
+async function startAutoSimulation() {
+
+    if (
+        autoSimulation.running
+    ) {
+
+        alert(
+            "이미 실시간 자동 시뮬레이션이 실행 중입니다."
+        );
 
         return;
 
     }
 
 
-    output.innerHTML =
+    if (
+        !autoSimulation.code
+    ) {
 
-        "<h3>🧪 자동 전략 테스트 결과</h3>"
+        alert(
+            "먼저 종목을 검색하세요."
+        );
 
-        +
+        return;
 
-        "<p>① 1회차: "
-        +
-        result1.shares
-        +
-        "주 × "
-        +
-        price1.toLocaleString(
-            "ko-KR"
-        )
-        +
-        "원</p>"
+    }
 
-        +
 
-        "<p>② 2회차: "
-        +
-        result2.shares
-        +
-        "주 × "
-        +
-        price2.toLocaleString(
-            "ko-KR"
-        )
-        +
-        "원</p>"
+    autoSimulation.running =
+        true;
 
-        +
 
-        "<p>③ 3회차: "
-        +
-        result3.shares
-        +
-        "주 × "
-        +
-        Math.round(
-            price3
-        ).toLocaleString(
-            "ko-KR"
-        )
-        +
-        "원</p>"
+    autoSimulation.startedAt =
+        new Date();
 
-        +
 
-        "<hr>"
+    autoSimulation.lastAction =
+        "시뮬레이션 시작";
 
-        +
 
-        "<p>총 보유주식: "
-        +
-        testState.totalShares
-        +
-        "주</p>"
+    updateAutoSimulationUI();
 
-        +
 
-        "<p>최종 평균매수가: "
-        +
-        Math.round(
-            testState.averagePrice
-        ).toLocaleString(
-            "ko-KR"
-        )
-        +
-        "원</p>"
+    /*
+       첫 가격 즉시 확인
+    */
 
-        +
+    await processAutoSimulation();
 
-        "<p>+5% 목표매도가: "
-        +
-        Math.round(
-            testState.targetPrice
-        ).toLocaleString(
-            "ko-KR"
-        )
-        +
-        "원</p>"
 
-        +
+    /*
+       5초마다 현재가 확인
+    */
 
-        "<p>전량매도: "
-        +
-        sell.shares
-        +
-        "주</p>"
+    autoSimulation.timer =
 
-        +
+        setInterval(
 
-        "<p>실현손익: "
-        +
-        Math.round(
-            sell.profit
-        ).toLocaleString(
-            "ko-KR"
-        )
-        +
-        "원</p>"
+            processAutoSimulation,
 
-        +
+            autoSimulation.checkInterval
 
-        "<hr>"
+        );
 
-        +
 
-        "<h3>✅ 전략 테스트 성공</h3>";
+    updateAutoSimulationUI();
+
+}
+
+
+/* =====================================
+   실시간 자동 시뮬레이션 중지
+===================================== */
+
+function stopAutoSimulation() {
+
+    if (
+        autoSimulation.timer
+    ) {
+
+        clearInterval(
+            autoSimulation.timer
+        );
+
+    }
+
+
+    autoSimulation.timer =
+        null;
+
+
+    autoSimulation.running =
+        false;
+
+
+    autoSimulation.lastAction =
+        "시뮬레이션 중지";
+
+
+    updateAutoSimulationUI();
+
+}
+
+
+/* =====================================
+   실시간 가격 감지 + 전략 판단
+===================================== */
+
+async function processAutoSimulation() {
+
+    if (
+        !autoSimulation.running
+    ) {
+
+        return;
+
+    }
+
+
+    const currentPrice =
+        await fetchSimulationPrice();
+
+
+    if (
+        !currentPrice
+        ||
+        currentPrice <= 0
+    ) {
+
+        autoSimulation.lastAction =
+            "가격 조회 실패";
+
+
+        updateAutoSimulationUI();
+
+
+        return;
+
+    }
+
+
+    autoSimulation.lastPrice =
+        currentPrice;
+
+
+    /*
+       시뮬레이션 전용 상태를
+       실전 상태와 분리하여 사용
+    */
+
+    const signal =
+        getAutoSimulationSignal(
+            currentPrice
+        );
+
+
+    /*
+       첫 매수
+    */
+
+    if (
+        signal.action ===
+        "FIRST_BUY"
+    ) {
+
+        autoSimulationBuy(
+            currentPrice,
+            30
+        );
+
+
+        autoSimulation.lastAction =
+            "🟢 30주 첫 매수 실행";
+
+    }
+
+
+    /*
+       20주 추가매수
+    */
+
+    else if (
+        signal.action ===
+        "BUY_20"
+    ) {
+
+        autoSimulationBuy(
+            currentPrice,
+            20
+        );
+
+
+        autoSimulation.lastAction =
+            "🔴 20주 추가매수 실행";
+
+    }
+
+
+    /*
+       15주 추가매수
+    */
+
+    else if (
+        signal.action ===
+        "BUY_15"
+    ) {
+
+        autoSimulationBuy(
+            currentPrice,
+            15
+        );
+
+
+        autoSimulation.lastAction =
+            "🟠 15주 추가매수 실행";
+
+    }
+
+
+    /*
+       +5% 전량매도
+    */
+
+    else if (
+        signal.action ===
+        "SELL_ALL"
+    ) {
+
+        const result =
+            autoSimulationSellAll(
+                currentPrice
+            );
+
+
+        autoSimulation.lastAction =
+
+            "🔵 +5% 도달 → "
+            +
+            result.sellShares
+            +
+            "주 전량매도";
+
+
+        /*
+           매도 후 자동으로
+           새로운 30주 매수 사이클 시작
+        */
+
+    }
+
+
+    /*
+       매수하지 않는 경우
+    */
+
+    else {
+
+        autoSimulation.lastAction =
+            "⚪ 조건 미충족 → 대기";
+
+    }
+
+
+    updateAutoSimulationUI();
+
+}
+
+
+/* =====================================
+   자동 시뮬레이션 매매 판단
+===================================== */
+
+function getAutoSimulationSignal(
+    price
+) {
+
+    if (
+        autoSimulation.totalShares <= 0
+    ) {
+
+        return {
+
+            action:
+                "FIRST_BUY",
+
+            shares:
+                30
+
+        };
+
+    }
+
+
+    if (
+
+        autoSimulation.targetPrice > 0
+
+        &&
+
+        price >=
+        autoSimulation.targetPrice
+
+    ) {
+
+        return {
+
+            action:
+                "SELL_ALL",
+
+            shares:
+                autoSimulation.totalShares
+
+        };
+
+    }
+
+
+    if (
+
+        price <
+        autoSimulation.basePrice
+
+    ) {
+
+        return {
+
+            action:
+                "BUY_20",
+
+            shares:
+                20
+
+        };
+
+    }
+
+
+    if (
+
+        price ===
+        autoSimulation.basePrice
+
+    ) {
+
+        return {
+
+            action:
+                "BUY_15",
+
+            shares:
+                15
+
+        };
+
+    }
+
+
+    return {
+
+        action:
+            "WAIT",
+
+        shares:
+            0
+
+    };
+
+}
+
+
+/* =====================================
+   자동 시뮬레이션 매수
+===================================== */
+
+function autoSimulationBuy(
+    price,
+    shares
+) {
+
+    autoSimulation.totalCost +=
+
+        price
+        *
+        shares;
+
+
+    autoSimulation.totalShares +=
+        shares;
+
+
+    autoSimulation.averagePrice =
+
+        autoSimulation.totalCost
+        /
+        autoSimulation.totalShares;
+
+
+    autoSimulation.basePrice =
+
+        autoSimulation.averagePrice;
+
+
+    autoSimulation.targetPrice =
+
+        autoSimulation.averagePrice
+        *
+        1.05;
+
+
+    autoSimulation.tradeCount++;
+
+}
+
+
+/* =====================================
+   자동 시뮬레이션 전량매도
+===================================== */
+
+function autoSimulationSellAll(
+    price
+) {
+
+    const sellShares =
+        autoSimulation.totalShares;
+
+
+    const sellAmount =
+
+        price
+        *
+        sellShares;
+
+
+    const profit =
+
+        sellAmount
+        -
+        autoSimulation.totalCost;
+
+
+    const result = {
+
+        sellShares,
+
+        sellAmount,
+
+        profit
+
+    };
+
+
+    /*
+       매도 후 새로운 사이클
+    */
+
+    autoSimulation.totalShares =
+        0;
+
+
+    autoSimulation.totalCost =
+        0;
+
+
+    autoSimulation.averagePrice =
+        0;
+
+
+    autoSimulation.basePrice =
+        0;
+
+
+    autoSimulation.targetPrice =
+        0;
+
+
+    autoSimulation.tradeCount++;
+
+
+    return result;
+
+}
+
+
+/* =====================================
+   자동 시뮬레이션 화면 업데이트
+===================================== */
+
+function updateAutoSimulationUI() {
+
+    /*
+       현재 HTML에
+       시뮬레이션 전용 영역이 있으면 표시
+    */
+
+
+    const status =
+        document.getElementById(
+            "autoSimulationStatus"
+        );
+
+
+    const result =
+        document.getElementById(
+            "autoSimulationResult"
+        );
+
+
+    if (status) {
+
+        if (
+            autoSimulation.running
+        ) {
+
+            status.textContent =
+
+                "🟢 실행 중 | "
+                +
+                autoSimulation.lastAction;
+
+        } else {
+
+            status.textContent =
+
+                "⚪ 정지 | "
+                +
+                autoSimulation.lastAction;
+
+        }
+
+    }
+
+
+    if (result) {
+
+        result.innerHTML =
+
+            "<p>종목: "
+            +
+            (
+                autoSimulation.name
+                ||
+                autoSimulation.code
+                ||
+                "-"
+            )
+            +
+            "</p>"
+
+            +
+
+            "<p>현재가: "
+            +
+            (
+                autoSimulation.lastPrice > 0
+
+                    ? Math.round(
+                        autoSimulation.lastPrice
+                    ).toLocaleString(
+                        "ko-KR"
+                    )
+                    +
+                    "원"
+
+                    : "-"
+            )
+            +
+            "</p>"
+
+            +
+
+            "<p>보유주식: "
+            +
+            autoSimulation.totalShares
+            +
+            "주</p>"
+
+            +
+
+            "<p>평균매수가: "
+            +
+            (
+                autoSimulation.averagePrice > 0
+
+                    ? Math.round(
+                        autoSimulation.averagePrice
+                    ).toLocaleString(
+                        "ko-KR"
+                    )
+                    +
+                    "원"
+
+                    : "-"
+            )
+            +
+            "</p>"
+
+            +
+
+            "<p>기준가격: "
+            +
+            (
+                autoSimulation.basePrice > 0
+
+                    ? Math.round(
+                        autoSimulation.basePrice
+                    ).toLocaleString(
+                        "ko-KR"
+                    )
+                    +
+                    "원"
+
+                    : "-"
+            )
+            +
+            "</p>"
+
+            +
+
+            "<p>+5% 목표가: "
+            +
+            (
+                autoSimulation.targetPrice > 0
+
+                    ? Math.round(
+                        autoSimulation.targetPrice
+                    ).toLocaleString(
+                        "ko-KR"
+                    )
+                    +
+                    "원"
+
+                    : "-"
+            )
+            +
+            "</p>"
+
+            +
+
+            "<p>거래 횟수: "
+            +
+            autoSimulation.tradeCount
+            +
+            "회</p>"
+
+            +
+
+            "<p><strong>"
+            +
+            autoSimulation.lastAction
+            +
+            "</strong></p>";
+
+    }
+
+}
+
+
+/* =====================================
+   자동 시뮬레이션 초기화
+===================================== */
+
+function resetAutoSimulation() {
+
+    stopAutoSimulation();
+
+
+    autoSimulation = {
+
+        running:
+            false,
+
+        timer:
+            null,
+
+        code:
+            autoSimulation.code,
+
+        name:
+            autoSimulation.name,
+
+        lastPrice:
+            0,
+
+        checkInterval:
+            5000,
+
+        totalShares:
+            0,
+
+        totalCost:
+            0,
+
+        averagePrice:
+            0,
+
+        basePrice:
+            0,
+
+        targetPrice:
+            0,
+
+        tradeCount:
+            0,
+
+        lastAction:
+            "초기화",
+
+        startedAt:
+            null
+
+    };
+
+
+    updateAutoSimulationUI();
 
 }
 
