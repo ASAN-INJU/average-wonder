@@ -1,20 +1,1278 @@
-🇬🇧 영어 명시 50편
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>나의 성경 & 영어 명시 공부</title>
 
-1–2일차
-William Shakespeare
-Sonnet 18
+<style>
+* {
+  box-sizing: border-box;
+}
 
-📜 영어 원문
-🇰🇷 한국어 풀이
-🔊 영어 낭독
-🧠 단어·표현
-💭 생각해 볼 질문
-✍️ 따라 읽기
-☑️ 1일차 완료
-☑️ 2일차 완료
+body {
+  margin: 0;
+  background: #f3f6fa;
+  color: #222;
+  font-family:
+    -apple-system,
+    BlinkMacSystemFont,
+    "Noto Sans KR",
+    "Malgun Gothic",
+    sans-serif;
+  line-height: 1.7;
+}
 
-━━━━━━━━━━━━━━
+header {
+  background: linear-gradient(135deg,#315d9b,#557fc0);
+  color: white;
+  text-align: center;
+  padding: 28px 15px;
+}
 
-3–4일차
-Robert Frost
-The Road Not Taken
+header h1 {
+  margin: 0;
+  font-size: 25px;
+}
+
+header p {
+  margin: 6px 0 0;
+}
+
+.container {
+  max-width: 720px;
+  margin: auto;
+  padding: 15px;
+}
+
+.menu {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin: 15px 0;
+}
+
+.menu button {
+  border: 0;
+  background: white;
+  border-radius: 16px;
+  padding: 22px 10px;
+  font-size: 17px;
+  font-weight: bold;
+  box-shadow: 0 3px 12px rgba(0,0,0,.08);
+}
+
+.menu button.active {
+  background: #315d9b;
+  color: white;
+}
+
+.card {
+  background: white;
+  border-radius: 18px;
+  padding: 20px;
+  margin-bottom: 15px;
+  box-shadow: 0 3px 12px rgba(0,0,0,.07);
+}
+
+.progress {
+  height: 12px;
+  background: #e3e7ed;
+  border-radius: 20px;
+  overflow: hidden;
+  margin-top: 8px;
+}
+
+.progressBar {
+  height: 100%;
+  width: 0;
+  background: #315d9b;
+  transition: .3s;
+}
+
+.days {
+  display: grid;
+  grid-template-columns: repeat(5,1fr);
+  gap: 7px;
+  margin: 15px 0;
+}
+
+.days button {
+  border: 0;
+  border-radius: 10px;
+  background: white;
+  padding: 11px 3px;
+  font-weight: bold;
+  color: #315d9b;
+}
+
+.days button.active {
+  background: #315d9b;
+  color: white;
+}
+
+.days button.done {
+  background: #dff2e5;
+  color: #177238;
+}
+
+h2 {
+  color: #315d9b;
+  margin-top: 0;
+}
+
+h3 {
+  margin-bottom: 6px;
+}
+
+.author {
+  color: #666;
+  font-size: 16px;
+}
+
+.poemTitle {
+  font-size: 24px;
+  font-weight: bold;
+}
+
+.studyDay {
+  background: #eef4ff;
+  border-radius: 12px;
+  padding: 13px;
+  margin: 12px 0;
+}
+
+.question {
+  background: #f6f0ff;
+  padding: 12px;
+  border-radius: 10px;
+  margin: 7px 0;
+}
+
+.words {
+  background: #fff6df;
+  padding: 13px;
+  border-radius: 10px;
+}
+
+.practice {
+  background: #e9f7ed;
+  padding: 13px;
+  border-radius: 10px;
+}
+
+.button {
+  width: 100%;
+  border: 0;
+  border-radius: 12px;
+  padding: 15px;
+  margin-top: 10px;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.complete {
+  background: #315d9b;
+  color: white;
+}
+
+.voice {
+  background: #fff0d5;
+  color: #8a5600;
+}
+
+.back {
+  background: white;
+  border: 1px solid #ccc;
+}
+
+.small {
+  color: #777;
+  font-size: 13px;
+}
+
+.hidden {
+  display: none;
+}
+
+@media(max-width:430px) {
+  .menu {
+    grid-template-columns: 1fr;
+  }
+
+  .days {
+    grid-template-columns: repeat(4,1fr);
+  }
+}
+</style>
+</head>
+
+<body>
+
+<header>
+  <h1>📚 나의 공부</h1>
+  <p>성경 30일 · 영어 명시 50편</p>
+</header>
+
+<div class="container">
+
+  <div class="menu">
+    <button id="bibleMenu" onclick="showBible()">
+      📖<br>성경 30일
+    </button>
+
+    <button id="poemMenu" onclick="showPoems()">
+      🇬🇧<br>영어 명시 50편
+    </button>
+  </div>
+
+  <!-- 진행률 -->
+  <div class="card">
+    <strong id="progressTitle">📊 성경 진행률</strong>
+    <div id="progressText">0 / 30일</div>
+
+    <div class="progress">
+      <div class="progressBar" id="progressBar"></div>
+    </div>
+  </div>
+
+  <!-- 성경 -->
+  <section id="bibleSection">
+
+    <div class="days" id="bibleDays"></div>
+
+    <div class="card" id="bibleContent"></div>
+
+  </section>
+
+  <!-- 영어 명시 -->
+  <section id="poemSection" class="hidden">
+
+    <div class="days" id="poemDays"></div>
+
+    <div class="card" id="poemContent"></div>
+
+  </section>
+
+</div>
+
+<script>
+
+/* =====================================================
+   성경 30일
+===================================================== */
+
+const bible = [
+
+["1일차","마태복음 1–9장",
+"예수의 출생과 성장, 침례, 시험, 제자들을 부르신 일과 산상 수훈을 읽습니다.",
+[
+"여호와에 대해 무엇을 배울 수 있습니까?",
+"예수께서는 사람들을 어떻게 대하셨습니까?",
+"오늘 실천할 한 가지는 무엇입니까?"
+]],
+
+["2일차","마태복음 10–18장",
+"열두 사도의 활동, 왕국에 관한 비유, 믿음, 겸손과 용서에 관한 예수의 가르침입니다.",
+[
+"전파 활동에서 무엇을 배울 수 있습니까?",
+"용서에 대해 무엇을 배울 수 있습니까?",
+"나는 어떻게 겸손을 나타낼 수 있습니까?"
+]],
+
+["3일차","마태복음 19–27장",
+"제자도와 왕국, 예루살렘 입성, 예수의 마지막 활동과 죽음을 읽습니다.",
+[
+"예수를 따르는 데 무엇을 첫째로 두어야 합니까?",
+"예수의 충실함에서 무엇을 배울 수 있습니까?",
+"나의 우선순위를 점검할 필요가 있습니까?"
+]],
+
+["4일차","마태복음 28장 + 마가복음 1–8장",
+"예수의 부활과 제자들에게 주신 사명, 봉사와 여러 기적을 읽습니다.",
+[
+"부활 희망은 어떤 힘을 줍니까?",
+"예수께서는 어려운 사람들을 어떻게 도우셨습니까?",
+"좋은 소식을 전하는 데 무엇을 할 수 있습니까?"
+]],
+
+["5일차","마가복음 9–16장 + 누가복음 1장",
+"예수의 변형, 마지막 활동, 죽음과 부활, 누가복음의 시작을 읽습니다.",
+[
+"예수의 겸손에서 무엇을 배울 수 있습니까?",
+"충실함이 중요한 이유는 무엇입니까?",
+"하느님의 뜻을 따르기 위해 무엇을 조정할 수 있습니까?"
+]],
+
+["6일차","누가복음 2–10장",
+"예수의 성장과 침례, 전파 활동, 기적과 비유를 읽습니다.",
+[
+"예수께서는 사람들을 어떻게 대하셨습니까?",
+"이웃 사랑을 어떻게 행동으로 나타낼 수 있습니까?",
+"오늘 누구에게 친절을 베풀 수 있습니까?"
+]],
+
+["7일차","누가복음 11–19장",
+"기도, 왕국, 잃은 사람을 찾는 일과 여러 비유를 읽습니다.",
+[
+"기도에서 무엇을 배울 수 있습니까?",
+"여호와께서는 사람들에게 어떤 관심을 보이십니까?",
+"다른 사람을 어떻게 도울 수 있습니까?"
+]],
+
+["8일차","누가복음 20–24장 + 요한복음 1–4장",
+"예수의 죽음과 부활, 요한복음의 시작과 여러 대화를 읽습니다.",
+[
+"예수께서는 사람들의 마음을 어떻게 도우셨습니까?",
+"진리를 배우는 것이 왜 중요합니까?",
+"성경을 더 알아보기 위해 무엇을 할 수 있습니까?"
+]],
+
+["9일차","요한복음 5–13장",
+"예수의 기적, 선한 목자, 나사로의 부활 등을 읽습니다.",
+[
+"예수께서는 권한을 어떻게 사용하셨습니까?",
+"선한 목자에게서 무엇을 배울 수 있습니까?",
+"예수의 목소리를 듣는다는 것을 어떻게 나타낼 수 있습니까?"
+]],
+
+["10일차","요한복음 14–21장 + 사도행전 1장",
+"예수의 마지막 격려, 죽음과 부활, 제자들에게 주신 사명을 읽습니다.",
+[
+"예수께서는 제자들을 어떻게 위로하셨습니까?",
+"어려울 때 무엇을 기억해야 합니까?",
+"예수의 사명을 어떻게 지원할 수 있습니까?"
+]],
+
+["11일차","사도행전 2–10장",
+"초기 회중의 성장과 사울의 변화, 이방인에게 전파되는 과정을 읽습니다.",
+[
+"초기 제자들의 용기에서 무엇을 배울 수 있습니까?",
+"사울의 변화가 주는 교훈은 무엇입니까?",
+"사람을 배경으로 판단하지 않으려면 어떻게 해야 합니까?"
+]],
+
+["12일차","사도행전 11–19장",
+"초기 회중의 성장과 바울의 선교 여행을 읽습니다.",
+[
+"다양한 사람에게 좋은 소식을 전하는 데서 무엇을 배웁니까?",
+"반대를 만났을 때 바울은 어떻게 했습니까?",
+"나도 포기하지 않기 위해 무엇을 할 수 있습니까?"
+]],
+
+["13일차","사도행전 20–28장",
+"바울의 체포와 재판, 로마로의 여행과 전파를 읽습니다.",
+[
+"어려움 속에서도 바울이 계속한 일은 무엇입니까?",
+"충실함을 어떻게 나타낼 수 있습니까?",
+"어려울 때 기억할 성경 원칙은 무엇입니까?"
+]],
+
+["14일차","로마서 1–9장",
+"죄, 의, 믿음, 하느님의 과분한 친절과 구원을 다룹니다.",
+[
+"왜 구원이 필요합니까?",
+"믿음은 행동과 어떤 관계가 있습니까?",
+"과분한 친절에 어떻게 감사할 수 있습니까?"
+]],
+
+["15일차","로마서 10–16장 + 고린도 전서 1–2장",
+"믿음과 전파, 회중의 연합과 하느님의 지혜를 읽습니다.",
+[
+"좋은 소식을 전하는 일이 왜 중요합니까?",
+"회중의 연합에 어떻게 기여할 수 있습니까?",
+"하느님의 지혜를 신뢰한다는 것은 무엇입니까?"
+]],
+
+["16일차","고린도 전서 3–11장",
+"회중의 연합, 도덕, 양심, 자유와 사랑에 관한 교훈입니다.",
+[
+"사랑이 중요한 이유는 무엇입니까?",
+"나의 자유가 다른 사람에게 어떤 영향을 줍니까?",
+"연합을 위해 무엇을 할 수 있습니까?"
+]],
+
+["17일차","고린도 전서 12–16장 + 고린도 후서 1–4장",
+"영적 선물, 사랑, 부활, 봉사와 위로를 다룹니다.",
+[
+"각 사람의 능력이 왜 소중합니까?",
+"사랑을 행동으로 어떻게 나타낼 수 있습니까?",
+"어려운 사람을 어떻게 위로할 수 있습니까?"
+]],
+
+["18일차","고린도 후서 5–13장 + 갈라디아서 1장",
+"화해, 봉사, 관대함과 좋은 소식의 순수성을 다룹니다.",
+[
+"하느님과 화해한다는 것은 무엇입니까?",
+"다른 사람을 돕는 데 어떤 태도가 필요합니까?",
+"좋은 소식의 순수성을 어떻게 지킬 수 있습니까?"
+]],
+
+["19일차","갈라디아서 2–6장 + 에베소서 1–4장",
+"믿음과 자유, 영의 열매, 그리스도 안에서의 연합을 읽습니다.",
+[
+"영의 열매 중 어떤 특성을 발전시키고 싶습니까?",
+"자유를 올바르게 사용하려면 어떻게 해야 합니까?",
+"연합을 위해 어떤 노력을 할 수 있습니까?"
+]],
+
+["20일차","에베소서 5–6장 + 빌립보서 1–4장 + 골로새서 1–3장",
+"가족생활, 영적 갑주, 기쁨, 겸손과 새 인간에 관한 교훈입니다.",
+[
+"영적 갑주 중 무엇이 특히 필요합니까?",
+"어려울 때 기쁨을 유지하려면 어떻게 해야 합니까?",
+"예수의 겸손을 어떻게 본받을 수 있습니까?"
+]],
+
+["21일차","골로새서 4장 + 데살로니가 전서 1–5장 + 데살로니가 후서 1–2장",
+"믿음, 사랑, 인내, 기도와 미래의 희망을 읽습니다.",
+[
+"믿음·사랑·인내를 어떻게 키울 수 있습니까?",
+"미래의 희망이 현재에 어떤 힘을 줍니까?",
+"기도 생활에서 발전시킬 점은 무엇입니까?"
+]],
+
+["22일차","데살로니가 후서 3장 + 디모데 전서 1–6장 + 디모데 후서 1장",
+"좋은 질서, 건전한 가르침, 만족과 봉사를 다룹니다.",
+[
+"만족하는 생활이 왜 중요합니까?",
+"돈에 대한 올바른 태도는 무엇입니까?",
+"맡은 책임을 충실히 수행하려면 어떻게 해야 합니까?"
+]],
+
+["23일차","디모데 후서 2–4장 + 디도서 1–3장 + 빌레몬서 + 히브리서 1장",
+"충실한 봉사, 성경의 유익, 용서와 형제 사랑을 읽습니다.",
+[
+"성경이 나를 어떻게 바로잡아 줄 수 있습니까?",
+"용서를 어떻게 나타낼 수 있습니까?",
+"예수의 위치를 이해하는 것이 왜 중요합니까?"
+]],
+
+["24일차","히브리서 2–9장",
+"예수, 믿음, 대제사장, 새 계약과 희생에 관한 내용을 읽습니다.",
+[
+"예수의 역할을 알면 믿음이 어떻게 강해집니까?",
+"믿음은 행동과 어떤 관계가 있습니까?",
+"하느님의 약속을 얼마나 신뢰하고 있습니까?"
+]],
+
+["25일차","히브리서 10–13장 + 야고보서 1–4장",
+"인내, 믿음의 본, 형제 사랑과 실천하는 믿음을 읽습니다.",
+[
+"믿음이 행동으로 나타나고 있습니까?",
+"말이 다른 사람에게 어떤 영향을 줍니까?",
+"형제 사랑을 어떻게 나타낼 수 있습니까?"
+]],
+
+["26일차","야고보서 5장 + 베드로 전서 1–5장 + 베드로 후서 1–2장",
+"인내, 고난 가운데 충실함과 영적 성장을 다룹니다.",
+[
+"고난 중에 어떻게 충실함을 유지할 수 있습니까?",
+"영적으로 성장하려면 어떤 특성을 키워야 합니까?",
+"거짓 가르침을 경계하려면 무엇이 필요합니까?"
+]],
+
+["27일차","베드로 후서 3장 + 요한 1서 1–5장 + 요한 2서 + 요한 3서",
+"사랑과 진리, 순종과 형제들을 돕는 일에 관한 교훈입니다.",
+[
+"사랑과 순종은 어떤 관계가 있습니까?",
+"행동으로 사랑을 어떻게 나타낼 수 있습니까?",
+"다른 사람을 돕는 데서 무엇을 배울 수 있습니까?"
+]],
+
+["28일차","유다서 + 요한 계시록 1–7장",
+"믿음을 위해 힘쓰라는 권고와 일곱 회중에 관한 환상을 읽습니다.",
+[
+"믿음을 지키기 위해 어떤 노력이 필요합니까?",
+"예수께서 회중을 살피신다는 점에서 무엇을 배웁니까?",
+"영적으로 깨어 있기 위해 무엇을 할 수 있습니까?"
+]],
+
+["29일차","요한 계시록 8–15장",
+"나팔과 하늘의 환상, 왕국과 관련된 여러 환상을 읽습니다.",
+[
+"압력 속에서도 충실함을 유지하는 것이 왜 중요합니까?",
+"하느님의 왕국에 대한 희망이 어떤 힘을 줍니까?",
+"세상의 압력에 굴복하지 않으려면 어떻게 해야 합니까?"
+]],
+
+["30일차","요한 계시록 16–22장",
+"마지막 심판과 새 하늘과 새 땅, 미래의 희망을 읽습니다.",
+[
+"하느님께서 약속하신 미래에서 가장 기대되는 것은 무엇입니까?",
+"영원한 생명의 희망이 현재의 선택에 어떤 영향을 줍니까?",
+"30일 동안 가장 크게 배운 점은 무엇입니까?"
+]]
+
+];
+
+
+/* =====================================================
+   영어 명시 50편
+   한 작품 = 2일
+===================================================== */
+
+const poems = [
+
+["William Shakespeare","Sonnet 18",
+"사랑과 아름다움의 지속성을 생각하게 하는 유명한 소네트입니다.",
+["Shall I compare thee to a summer's day?",
+"How does the poet describe beauty?",
+"What makes something last?"]],
+
+["Robert Frost","The Road Not Taken",
+"인생에서 선택과 그 선택의 의미를 생각하게 하는 시입니다.",
+["Two roads diverged in a yellow wood...",
+"What choice is being described?",
+"How do choices shape life?"]],
+
+["William Wordsworth","Daffodils",
+"자연의 아름다움과 기억이 주는 기쁨을 노래합니다.",
+["I wandered lonely as a cloud...",
+"What does the poet see?",
+"How can nature affect our feelings?"]],
+
+["Edgar Allan Poe","Annabel Lee",
+"사랑과 기억을 중심으로 한 유명한 시입니다.",
+["It was many and many a year ago...",
+"What memory does the speaker keep?",
+"What feeling dominates the poem?"]],
+
+["Emily Dickinson","Hope is the thing with feathers",
+"희망을 작은 새에 비유하여 표현합니다.",
+["Hope is the thing with feathers...",
+"What is hope compared to?",
+"Why is hope important?"]],
+
+["Walt Whitman","O Captain! My Captain!",
+"상실과 슬픔을 상징적으로 표현한 시입니다.",
+["O Captain! my Captain! our fearful trip is done...",
+"Who is the Captain?",
+"What emotions are expressed?"]],
+
+["Christina Rossetti","Remember",
+"기억과 이별을 생각하게 하는 시입니다.",
+["Remember me when I am gone away...",
+"What does the speaker ask?",
+"What is the tone of the poem?"]],
+
+["Rudyard Kipling","If—",
+"인내와 자기 절제에 관한 유명한 조언의 시입니다.",
+["If you can keep your head when all about you...",
+"What qualities are encouraged?",
+"Which quality do you value most?"]],
+
+["William Blake","The Tyger",
+"자연과 창조의 신비를 질문하는 시입니다.",
+["Tyger Tyger, burning bright...",
+"What creature is described?",
+"What questions does the poet ask?"]],
+
+["William Blake","The Lamb",
+"순수함과 창조에 관한 시입니다.",
+["Little Lamb who made thee?",
+"Who made the lamb?",
+"How is innocence presented?"]],
+
+["Percy Bysshe Shelley","Ozymandias",
+"권력과 인간의 영광이 결국 사라진다는 주제를 다룹니다.",
+["I met a traveller from an antique land...",
+"What remains of the king?",
+"What is the lesson about power?"]],
+
+["John Keats","To Autumn",
+"가을의 풍요와 자연의 아름다움을 묘사합니다.",
+["Season of mists and mellow fruitfulness...",
+"What images of autumn appear?",
+"How does the poem celebrate nature?"]],
+
+["Samuel Taylor Coleridge","Kubla Khan",
+"상상과 꿈 같은 풍경을 보여 주는 시입니다.",
+["In Xanadu did Kubla Khan...",
+"What kind of place is described?",
+"How does imagination work in the poem?"]],
+
+["Lord Byron","She Walks in Beauty",
+"아름다움과 내면의 조화를 노래합니다.",
+["She walks in beauty, like the night...",
+"How is beauty described?",
+"What is the relationship between appearance and character?"]],
+
+["Elizabeth Barrett Browning","How Do I Love Thee?",
+"사랑의 깊이와 지속성을 표현합니다.",
+["How do I love thee? Let me count the ways.",
+"How does the speaker measure love?",
+"Why is love presented as lasting?"]],
+
+["Thomas Gray","Elegy Written in a Country Churchyard",
+"평범한 사람들의 삶과 죽음을 생각하게 하는 시입니다.",
+["The curfew tolls the knell of parting day...",
+"What setting is described?",
+"What does the poem say about ordinary lives?"]],
+
+["Alfred Lord Tennyson","The Eagle",
+"독수리의 힘과 자연의 모습을 간결하게 표현합니다.",
+["He clasps the crag with crooked hands...",
+"What does the eagle symbolize?",
+"What images show strength?"]],
+
+["Alfred Lord Tennyson","The Charge of the Light Brigade",
+"전쟁 속 용기와 희생을 다룹니다.",
+["Half a league, half a league...",
+"What are the soldiers doing?",
+"What does courage mean here?"]],
+
+["Robert Burns","A Red, Red Rose",
+"사랑의 아름다움과 지속성을 표현합니다.",
+["O my Luve's like a red, red rose...",
+"What comparisons are used?",
+"How does the speaker describe love?"]],
+
+["George Gordon Byron","When We Two Parted",
+"이별과 기억의 슬픔을 다룹니다.",
+["When we two parted in silence and tears...",
+"What emotions follow separation?",
+"How does memory affect the speaker?"]],
+
+["Henry Wadsworth Longfellow","A Psalm of Life",
+"삶을 적극적으로 살아가라는 메시지를 전합니다.",
+["Tell me not, in mournful numbers...",
+"What does the poet say about life?",
+"What does it mean to leave footprints?"]],
+
+["James Russell Lowell","The First Snowfall",
+"눈과 기억, 가족의 사랑을 연결합니다.",
+["The snow had begun in the gloaming...",
+"What does snow remind the speaker of?",
+"What feeling does the poem create?"]],
+
+["Oliver Wendell Holmes Sr.","Old Ironsides",
+"역사와 기억을 기념하는 시입니다.",
+["Ay, tear her tattered ensign down!",
+"What is being remembered?",
+"Why should history be preserved?"]],
+
+["Edgar Allan Poe","The Raven",
+"상실과 기억, 반복되는 슬픔을 다룹니다.",
+["Once upon a midnight dreary...",
+"What atmosphere is created?",
+"What does the raven represent to the speaker?"]],
+
+["Emily Dickinson","Because I could not stop for Death",
+"죽음과 시간을 독특한 방식으로 묘사합니다.",
+["Because I could not stop for Death...",
+"How is Death personified?",
+"How does the speaker experience time?"]],
+
+["Emily Dickinson","I heard a Fly buzz—when I died",
+"죽음의 순간을 조용하고 독특하게 묘사합니다.",
+["I heard a Fly buzz—when I died...",
+"What interrupts the scene?",
+"How does the poem portray death?"]],
+
+["Walt Whitman","I Hear America Singing",
+"사람들의 일과 삶을 노래하는 시입니다.",
+["I hear America singing, the varied carols I hear...",
+"Who is singing?",
+"How is ordinary work celebrated?"]],
+
+["Walt Whitman","A Noiseless Patient Spider",
+"거미의 움직임을 인간의 영적 탐구와 연결합니다.",
+["A noiseless patient spider...",
+"What does the spider do?",
+"How is the spider compared with the soul?"]],
+
+["William Wordsworth","Composed upon Westminster Bridge",
+"도시의 평화로운 아침 풍경을 바라봅니다.",
+["Earth has not anything to show more fair...",
+"What does the poet see?",
+"Why is the city described as beautiful?"]],
+
+["William Wordsworth","The World Is Too Much with Us",
+"자연과 멀어진 현대인의 삶을 비판합니다.",
+["The world is too much with us...",
+"What problem does the poet identify?",
+"How can people reconnect with nature?"]],
+
+["John Keats","Bright Star",
+"변하지 않는 사랑에 대한 소망을 표현합니다.",
+["Bright star, would I were stedfast as thou art...",
+"What does the star symbolize?",
+"What does the speaker desire?"]],
+
+["John Keats","Ode to a Nightingale",
+"자연과 상상, 인간의 고통과 아름다움을 탐구합니다.",
+["My heart aches, and a drowsy numbness pains...",
+"What does the nightingale represent?",
+"How does imagination affect the speaker?"]],
+
+["Percy Bysshe Shelley","To a Skylark",
+"새의 노래를 통해 기쁨과 영감을 탐구합니다.",
+["Hail to thee, blithe Spirit!",
+"What does the skylark symbolize?",
+"What does the poet admire?"]],
+
+["Percy Bysshe Shelley","To the West Wind",
+"변화와 재생에 대한 강렬한 시입니다.",
+["O wild West Wind, thou breath of Autumn's being...",
+"What does the wind represent?",
+"What kind of change does the poet desire?"]],
+
+["Oscar Wilde","The Ballad of Reading Gaol",
+"감옥과 인간의 고통을 다룹니다.",
+["Yet each man kills the thing he loves...",
+"What themes appear?",
+"How does the poem portray suffering?"]],
+
+["Gerard Manley Hopkins","God's Grandeur",
+"자연 속에서 창조의 위대함을 바라봅니다.",
+["The world is charged with the grandeur of God...",
+"What does grandeur mean?",
+"How does nature reveal beauty?"]],
+
+["Gerard Manley Hopkins","Pied Beauty",
+"다양한 자연의 아름다움을 찬양합니다.",
+["Glory be to God for dappled things...",
+"What kinds of things are celebrated?",
+"Why is variety beautiful?"]],
+
+["Dante Gabriel Rossetti","A Birthday",
+"사랑과 기쁨을 풍성한 이미지로 표현합니다.",
+["My heart is like a singing bird...",
+"What images express happiness?",
+"How does love change the speaker?"]],
+
+["Edgar Allan Poe","A Dream Within a Dream",
+"현실과 꿈, 시간이 손에서 빠져나가는 느낌을 다룹니다.",
+["Take this kiss upon the brow!",
+"What is the speaker questioning?",
+"What does the sand symbolize?"]],
+
+["Ralph Waldo Emerson","Concord Hymn",
+"역사적 기억과 자유를 기념합니다.",
+["By the rude bridge that arched the flood...",
+"What historical memory is celebrated?",
+"Why should sacrifice be remembered?"]],
+
+["Henry Wadsworth Longfellow","The Arrow and the Song",
+"작은 행동이 예상하지 못한 영향을 줄 수 있음을 보여 줍니다.",
+["I shot an arrow into the air...",
+"What happens to the arrow and song?",
+"What lesson can we learn?"]],
+
+["Robert Frost","Stopping by Woods on a Snowy Evening",
+"아름다운 자연과 책임 사이의 긴장을 보여 줍니다.",
+["Whose woods these are I think I know...",
+"Why does the speaker stop?",
+"What responsibilities call him onward?"]],
+
+["Robert Frost","Fire and Ice",
+"세상을 파괴할 수 있는 욕망과 증오를 생각하게 합니다.",
+["Some say the world will end in fire...",
+"What do fire and ice represent?",
+"Which human emotions are discussed?"]],
+
+["Robert Frost","Nothing Gold Can Stay",
+"아름다운 순간의 덧없음을 표현합니다.",
+["Nature's first green is gold...",
+"What does gold represent?",
+"Why can't beauty remain unchanged?"]],
+
+["E. E. Cummings","i carry your heart with me",
+"사랑과 깊은 연결을 표현하는 현대시입니다.",
+["i carry your heart with me...",
+"How is love described?",
+"What does emotional connection mean?"]],
+
+["Langston Hughes","Dreams",
+"꿈을 포기하지 말아야 한다는 메시지를 전합니다.",
+["Hold fast to dreams...",
+"What happens when dreams die?",
+"Why are dreams important?"]],
+
+["Langston Hughes","Harlem",
+"미뤄진 꿈이 어떻게 변하는지를 질문합니다.",
+["What happens to a dream deferred?",
+"What possibilities does the poet suggest?",
+"Why are dreams important?"]],
+
+["Maya Angelou","Still I Rise",
+"역경 속에서도 존엄과 자신감을 강조합니다.",
+["You may write me down in history...",
+"What attitude does the speaker show?",
+"How does resilience appear?"]],
+
+["Paul Laurence Dunbar","Sympathy",
+"자유를 갈망하는 마음을 새장 속 새에 비유합니다.",
+["I know why the caged bird sings...",
+"What does the caged bird symbolize?",
+"Why does the bird sing?"]],
+
+["William Ernest Henley","Invictus",
+"어려움 속에서도 자신의 의지를 지키는 태도를 표현합니다.",
+["I am the master of my fate...",
+"What does courage mean?",
+"How does the speaker respond to hardship?"]],
+
+["Joyce Kilmer","Trees",
+"자연의 아름다움과 창조에 대한 감탄을 표현합니다.",
+["I think that I shall never see...",
+"What does the tree symbolize?",
+"How does the poet view creation?"]],
+
+["Sara Teasdale","There Will Come Soft Rains",
+"자연과 인간의 부재를 대비합니다.",
+["There will come soft rains and the smell of the ground...",
+"What continues after humanity?",
+"What does nature suggest?"]]
+
+];
+
+
+/* =====================================================
+   저장
+===================================================== */
+
+let bibleDone =
+JSON.parse(localStorage.getItem("bibleDone") || "[]");
+
+let poemDone =
+JSON.parse(localStorage.getItem("poemDone") || "[]");
+
+let bibleCurrent = 1;
+let poemCurrent = 1;
+
+
+/* =====================================================
+   화면 전환
+===================================================== */
+
+function showBible(){
+
+  document.getElementById("bibleSection").classList.remove("hidden");
+  document.getElementById("poemSection").classList.add("hidden");
+
+  document.getElementById("bibleMenu").classList.add("active");
+  document.getElementById("poemMenu").classList.remove("active");
+
+  document.getElementById("progressTitle").textContent =
+  "📊 성경 진행률";
+
+  renderBibleDays();
+  renderBible();
+
+}
+
+
+function showPoems(){
+
+  document.getElementById("bibleSection").classList.add("hidden");
+  document.getElementById("poemSection").classList.remove("hidden");
+
+  document.getElementById("bibleMenu").classList.remove("active");
+  document.getElementById("poemMenu").classList.add("active");
+
+  document.getElementById("progressTitle").textContent =
+  "📊 영어 명시 진행률";
+
+  renderPoemDays();
+  renderPoem();
+
+}
+
+
+/* =====================================================
+   성경
+===================================================== */
+
+function renderBibleDays(){
+
+  const box =
+  document.getElementById("bibleDays");
+
+  box.innerHTML="";
+
+  bible.forEach((item,i)=>{
+
+    const button =
+    document.createElement("button");
+
+    button.textContent =
+    bibleDone.includes(i+1)
+    ? "✓"+(i+1)
+    : (i+1);
+
+    if(bibleCurrent===i+1)
+      button.classList.add("active");
+
+    if(bibleDone.includes(i+1))
+      button.classList.add("done");
+
+    button.onclick=()=>{
+
+      bibleCurrent=i+1;
+
+      renderBibleDays();
+      renderBible();
+
+    };
+
+    box.appendChild(button);
+
+  });
+
+  updateProgress();
+
+}
+
+
+function renderBible(){
+
+  const d =
+  bible[bibleCurrent-1];
+
+  const questions =
+  d[3].map((q,i)=>
+  `<div class="question">
+  <strong>${i+1}.</strong> ${q}
+  </div>`
+  ).join("");
+
+  document.getElementById("bibleContent").innerHTML=`
+
+  <h2>📖 ${d[0]}</h2>
+
+  <div class="poemTitle">${d[1]}</div>
+
+  <p>${d[2]}</p>
+
+  <h3>💭 묵상해 볼 질문</h3>
+
+  ${questions}
+
+  <h3>⭐ 오늘의 실천</h3>
+
+  <div class="practice">
+  오늘 읽은 내용 가운데 한 가지를 실제 생활에서 실천해 보세요.
+  </div>
+
+  <button class="button voice"
+  onclick="speak('${d[2]}')">
+  🔊 내용 음성으로 듣기
+  </button>
+
+  <button class="button complete"
+  onclick="toggleBible(${bibleCurrent})">
+
+  ${
+    bibleDone.includes(bibleCurrent)
+    ? "✅ 완료 취소"
+    : "☑️ 오늘 읽기 완료"
+  }
+
+  </button>
+
+  `;
+
+}
+
+
+/* =====================================================
+   영어 명시
+===================================================== */
+
+function renderPoemDays(){
+
+  const box =
+  document.getElementById("poemDays");
+
+  box.innerHTML="";
+
+  for(let day=1;day<=100;day++){
+
+    const button =
+    document.createElement("button");
+
+    const poemNumber =
+    Math.ceil(day/2);
+
+    button.textContent =
+    poemDone.includes(day)
+    ? "✓"+day
+    : day;
+
+    if(poemCurrent===day)
+      button.classList.add("active");
+
+    if(poemDone.includes(day))
+      button.classList.add("done");
+
+    button.onclick=()=>{
+
+      poemCurrent=day;
+
+      renderPoemDays();
+      renderPoem();
+
+    };
+
+    box.appendChild(button);
+
+  }
+
+  updateProgress();
+
+}
+
+
+function renderPoem(){
+
+  const poemNumber =
+  Math.ceil(poemCurrent/2);
+
+  const p =
+  poems[poemNumber-1];
+
+  const firstDay =
+  poemNumber*2-1;
+
+  const secondDay =
+  poemNumber*2;
+
+  const studyDay =
+  poemCurrent===firstDay
+  ? "1일차 · 작품 이해"
+  : "2일차 · 표현과 생각";
+
+  document.getElementById("poemContent").innerHTML=`
+
+  <div class="studyDay">
+  🇬🇧 영어 명시 ${poemNumber}/50<br>
+  ${firstDay}–${secondDay}일차<br>
+  <strong>${studyDay}</strong>
+  </div>
+
+  <div class="poemTitle">
+  ${p[1]}
+  </div>
+
+  <div class="author">
+  ${p[0]}
+  </div>
+
+  <h3>📝 작품 소개</h3>
+
+  <p>${p[2]}</p>
+
+  <h3>📜 영어 표현</h3>
+
+  <div class="words">
+  <strong>${p[3][0]}</strong>
+  <br><br>
+  핵심 표현을 소리 내어 읽어 보세요.
+  </div>
+
+  <h3>🧠 핵심 공부</h3>
+
+  <div class="words">
+  • 작품의 주제를 파악합니다.<br>
+  • 모르는 단어를 찾아봅니다.<br>
+  • 문장을 소리 내어 읽습니다.<br>
+  • 자신의 말로 내용을 설명해 봅니다.
+  </div>
+
+  <h3>💭 생각해 볼 질문</h3>
+
+  <div class="question">
+  1. ${p[3][1]}
+  </div>
+
+  <div class="question">
+  2. ${p[3][2]}
+  </div>
+
+  <div class="question">
+  3. 오늘 이 작품에서 기억하고 싶은 것은 무엇입니까?
+  </div>
+
+  <h3>🇰🇷 한국어 풀이</h3>
+
+  <div class="practice">
+  이 작품은 <strong>${p[1]}</strong>이라는 주제를 통해
+  인간의 감정, 자연, 삶 또는 사회에 대해 생각하게 합니다.
+  영어 문장을 먼저 이해한 뒤 자신의 말로 한국어로 설명해 보세요.
+  </div>
+
+  <button class="button voice"
+  onclick="speakEnglish('${p[3][0]}')">
+  🔊 영어로 읽어 듣기
+  </button>
+
+  <button class="button complete"
+  onclick="togglePoem(${poemCurrent})">
+
+  ${
+    poemDone.includes(poemCurrent)
+    ? "✅ 이 날의 공부 완료 취소"
+    : "☑️ 이 날의 공부 완료"
+  }
+
+  </button>
+
+  <p class="small">
+  ${firstDay}–${secondDay}일차는 같은 명시를 공부합니다.
+  </p>
+
+  `;
+
+}
+
+
+/* =====================================================
+   완료
+===================================================== */
+
+function toggleBible(day){
+
+  if(bibleDone.includes(day)){
+
+    bibleDone =
+    bibleDone.filter(x=>x!==day);
+
+  }else{
+
+    bibleDone.push(day);
+
+  }
+
+  localStorage.setItem(
+  "bibleDone",
+  JSON.stringify(bibleDone)
+  );
+
+  renderBibleDays();
+  renderBible();
+
+}
+
+
+function togglePoem(day){
+
+  if(poemDone.includes(day)){
+
+    poemDone =
+    poemDone.filter(x=>x!==day);
+
+  }else{
+
+    poemDone.push(day);
+
+  }
+
+  localStorage.setItem(
+  "poemDone",
+  JSON.stringify(poemDone)
+  );
+
+  renderPoemDays();
+  renderPoem();
+
+}
+
+
+/* =====================================================
+   진행률
+===================================================== */
+
+function updateProgress(){
+
+  let done;
+  let total;
+
+  if(
+    !document
+    .getElementById("poemSection")
+    .classList.contains("hidden")
+  ){
+
+    done=poemDone.length;
+    total=100;
+
+  }else{
+
+    done=bibleDone.length;
+    total=30;
+
+  }
+
+  const percent =
+  Math.round(done/total*100);
+
+  document.getElementById("progressText").textContent =
+  `${done} / ${total}일 완료`;
+
+  document.getElementById("progressBar").style.width =
+  percent+"%";
+
+}
+
+
+/* =====================================================
+   음성
+===================================================== */
+
+function speak(text){
+
+  if(!("speechSynthesis" in window)){
+
+    alert("이 휴대폰의 음성 읽기를 사용할 수 없습니다.");
+
+    return;
+
+  }
+
+  speechSynthesis.cancel();
+
+  const u =
+  new SpeechSynthesisUtterance(text);
+
+  u.lang="ko-KR";
+  u.rate=.9;
+
+  speechSynthesis.speak(u);
+
+}
+
+
+function speakEnglish(text){
+
+  if(!("speechSynthesis" in window)){
+
+    alert("이 휴대폰의 음성 읽기를 사용할 수 없습니다.");
+
+    return;
+
+  }
+
+  speechSynthesis.cancel();
+
+  const u =
+  new SpeechSynthesisUtterance(text);
+
+  u.lang="en-US";
+  u.rate=.8;
+
+  speechSynthesis.speak(u);
+
+}
+
+
+/* 시작 */
+
+showBible();
+
+</script>
+
+</body>
+</html>
