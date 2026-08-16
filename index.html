@@ -3,1218 +3,787 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="theme-color" content="#111827">
-
-<title>단타 매수·수익 관리 시스템</title>
+<meta name="theme-color" content="#315d9b">
+<title>그리스도인 그리스어 성경 30일 읽기</title>
 
 <style>
 * {
-    box-sizing: border-box;
+  box-sizing: border-box;
 }
 
 body {
-    margin: 0;
-    padding: 15px;
-    font-family: Arial, "Noto Sans KR", sans-serif;
-    background: #f3f4f6;
-    color: #111827;
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Noto Sans KR",
+               "Malgun Gothic", sans-serif;
+  background: #f3f6fa;
+  color: #222;
+  line-height: 1.7;
+}
+
+header {
+  background: linear-gradient(135deg, #315d9b, #4d82c3);
+  color: white;
+  padding: 28px 18px;
+  text-align: center;
+}
+
+header h1 {
+  margin: 0 0 8px;
+  font-size: 25px;
+}
+
+header p {
+  margin: 0;
+  font-size: 15px;
 }
 
 .container {
-    max-width: 800px;
-    margin: auto;
+  max-width: 700px;
+  margin: auto;
+  padding: 15px;
 }
 
-h1 {
-    text-align: center;
-    margin: 10px 0 20px;
-    font-size: 24px;
+.progress-box {
+  background: white;
+  border-radius: 16px;
+  padding: 16px;
+  margin-bottom: 15px;
+  box-shadow: 0 2px 10px rgba(0,0,0,.07);
+}
+
+.progress {
+  height: 12px;
+  background: #e5e9ef;
+  border-radius: 20px;
+  overflow: hidden;
+  margin-top: 8px;
+}
+
+.progress-bar {
+  height: 100%;
+  width: 0%;
+  background: #315d9b;
+  transition: .3s;
+}
+
+.days {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 8px;
+  margin-bottom: 15px;
+}
+
+.day-button {
+  border: 0;
+  border-radius: 12px;
+  padding: 13px 5px;
+  background: white;
+  color: #315d9b;
+  font-size: 15px;
+  font-weight: bold;
+  box-shadow: 0 2px 8px rgba(0,0,0,.08);
+  cursor: pointer;
+}
+
+.day-button.active {
+  background: #315d9b;
+  color: white;
+}
+
+.day-button.done {
+  background: #dff3e4;
+  color: #19713a;
 }
 
 .card {
-    background: white;
-    border-radius: 14px;
-    padding: 18px;
-    margin-bottom: 15px;
-    box-shadow: 0 3px 12px rgba(0,0,0,0.08);
+  background: white;
+  border-radius: 18px;
+  padding: 22px;
+  margin-bottom: 15px;
+  box-shadow: 0 2px 12px rgba(0,0,0,.08);
 }
 
-h2 {
-    margin-top: 0;
-    font-size: 19px;
+.day-title {
+  color: #315d9b;
+  font-size: 25px;
+  font-weight: bold;
+  margin-bottom: 4px;
 }
 
-.grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 10px;
+.range {
+  font-size: 20px;
+  font-weight: bold;
+  margin-bottom: 20px;
 }
 
-label {
-    display: block;
-    font-size: 14px;
-    font-weight: bold;
-    margin-bottom: 5px;
+.section-title {
+  font-size: 18px;
+  font-weight: bold;
+  margin-top: 20px;
+  color: #333;
 }
 
-input {
-    width: 100%;
-    padding: 12px;
-    border: 1px solid #d1d5db;
-    border-radius: 8px;
-    font-size: 16px;
+.action {
+  display: block;
+  text-decoration: none;
+  text-align: center;
+  padding: 14px;
+  margin: 10px 0;
+  border-radius: 12px;
+  font-weight: bold;
+  font-size: 16px;
 }
 
-button {
-    width: 100%;
-    padding: 13px;
-    margin-top: 10px;
-    border: none;
-    border-radius: 8px;
-    font-size: 16px;
-    font-weight: bold;
-    cursor: pointer;
+.read {
+  background: #e8f0ff;
+  color: #174a91;
 }
 
-.primary {
-    background: #2563eb;
-    color: white;
+.audio {
+  background: #fff0d9;
+  color: #9a5b00;
 }
 
-.success {
-    background: #16a34a;
-    color: white;
+.question {
+  background: #f7f0ff;
+  padding: 13px;
+  border-radius: 10px;
+  margin: 8px 0;
 }
 
-.warning {
-    background: #f59e0b;
-    color: white;
+.practice {
+  background: #e8f7ec;
+  padding: 15px;
+  border-radius: 12px;
 }
 
-.danger {
-    background: #dc2626;
-    color: white;
+.complete {
+  width: 100%;
+  border: 0;
+  background: #315d9b;
+  color: white;
+  padding: 16px;
+  border-radius: 12px;
+  font-size: 17px;
+  font-weight: bold;
+  margin-top: 20px;
+  cursor: pointer;
 }
 
-.gray {
-    background: #6b7280;
-    color: white;
+.reset {
+  width: 100%;
+  border: 1px solid #ccc;
+  background: white;
+  color: #555;
+  padding: 12px;
+  border-radius: 12px;
+  margin-top: 10px;
+  cursor: pointer;
 }
 
-.status {
-    padding: 15px;
-    margin-top: 15px;
-    border-radius: 10px;
-    background: #f3f4f6;
-    font-size: 17px;
-    font-weight: bold;
-    text-align: center;
+.small {
+  color: #777;
+  font-size: 13px;
 }
 
-.buy-ok {
-    background: #dcfce7;
-    color: #166534;
+footer {
+  text-align: center;
+  padding: 25px 10px;
+  color: #777;
+  font-size: 13px;
 }
 
-.buy-stop {
-    background: #fee2e2;
-    color: #991b1b;
-}
+@media (max-width: 420px) {
+  .days {
+    grid-template-columns: repeat(4, 1fr);
+  }
 
-.info-row {
-    display: flex;
-    justify-content: space-between;
-    padding: 8px 0;
-    border-bottom: 1px solid #eee;
-}
+  .day-title {
+    font-size: 23px;
+  }
 
-.info-row:last-child {
-    border-bottom: none;
-}
-
-.profit {
-    font-size: 22px;
-    font-weight: bold;
-}
-
-.history-item {
-    border: 1px solid #ddd;
-    border-radius: 10px;
-    padding: 14px;
-    margin-top: 10px;
-    background: #fafafa;
-}
-
-.history-item button {
-    margin-top: 10px;
-}
-
-.empty {
-    text-align: center;
-    color: #777;
-    padding: 20px;
-}
-
-@media(max-width:600px) {
-    .grid {
-        grid-template-columns: 1fr;
-    }
-
-    h1 {
-        font-size: 21px;
-    }
+  .range {
+    font-size: 18px;
+  }
 }
 </style>
 </head>
 
 <body>
 
+<header>
+  <h1>📖 그리스도인 그리스어 성경</h1>
+  <p>30일 완독 · 읽기 · 음성 · 묵상</p>
+</header>
+
 <div class="container">
 
-<h1>📈 단타 매수 · 수익 관리 시스템</h1>
+  <div class="progress-box">
+    <strong>📊 나의 진행률</strong>
+    <div id="progressText">0 / 30일 완료</div>
+    <div class="progress">
+      <div class="progress-bar" id="progressBar"></div>
+    </div>
+  </div>
 
-<!-- ===============================
-     종목 기본정보
-================================ -->
+  <div class="days" id="dayButtons"></div>
 
-<div class="card">
+  <div class="card" id="content"></div>
 
-<h2>① 종목 정보</h2>
-
-<div class="grid">
-
-<div>
-<label>종목명</label>
-<input
-    type="text"
-    id="stockName"
-    placeholder="예: 기업은행"
->
-</div>
-
-<div>
-<label>현재 주가</label>
-<input
-    type="number"
-    id="currentPrice"
-    placeholder="예: 21350"
->
-</div>
-
-<div>
-<label>20일 이동평균선</label>
-<input
-    type="number"
-    id="ma20"
-    placeholder="예: 21000"
->
-</div>
-
-<div>
-<label>매수 주식 수</label>
-<input
-    type="number"
-    id="buyQuantity"
-    placeholder="예: 30"
->
-</div>
+  <button class="reset" onclick="resetProgress()">
+    진행 기록 모두 지우기
+  </button>
 
 </div>
 
-<button
-    class="primary"
-    onclick="checkBuyCondition()"
->
-매수 조건 확인
-</button>
-
-<div
-    id="buyStatus"
-    class="status"
->
-현재가와 20일선을 입력하세요.
-</div>
-
-</div>
-
-
-<!-- ===============================
-     매수 실행
-================================ -->
-
-<div class="card">
-
-<h2>② 매수 실행</h2>
-
-<button
-    class="success"
-    onclick="executeBuy()"
->
-매수 실행
-</button>
-
-<div id="buyMessage" class="status">
-아직 매수하지 않았습니다.
-</div>
-
-</div>
-
-
-<!-- ===============================
-     현재 매매 현황
-================================ -->
-
-<div class="card">
-
-<h2>③ 현재 매매 현황</h2>
-
-<div class="info-row">
-<span>종목</span>
-<strong id="displayStock">-</strong>
-</div>
-
-<div class="info-row">
-<span>총 매수수량</span>
-<strong id="totalQuantity">0주</strong>
-</div>
-
-<div class="info-row">
-<span>총 매수금액</span>
-<strong id="totalAmount">0원</strong>
-</div>
-
-<div class="info-row">
-<span>평균매수가</span>
-<strong id="averagePrice">0원</strong>
-</div>
-
-<div class="info-row">
-<span>+5% 목표 매도가</span>
-<strong id="targetPrice">0원</strong>
-</div>
-
-<div class="info-row">
-<span>예상 수익금</span>
-<strong
-    id="expectedProfit"
-    class="profit"
->
-0원
-</strong>
-</div>
-
-</div>
-
-
-<!-- ===============================
-     매도
-================================ -->
-
-<div class="card">
-
-<h2>④ 매도</h2>
-
-<div class="grid">
-
-<div>
-<label>현재 매도가</label>
-
-<input
-    type="number"
-    id="sellPrice"
-    placeholder="현재 주가 입력"
->
-</div>
-
-</div>
-
-<button
-    class="warning"
-    onclick="checkSellCondition()"
->
-매도 조건 확인
-</button>
-
-<div
-    id="sellStatus"
-    class="status"
->
-평균매수가 +5% 도달 여부를 확인하세요.
-</div>
-
-<button
-    class="danger"
-    onclick="executeSell()"
->
-전량 매도
-</button>
-
-</div>
-
-
-<!-- ===============================
-     수익 기록
-================================ -->
-
-<div class="card">
-
-<h2>⑤ 수익 기록</h2>
-
-<div id="historyList">
-
-<div class="empty">
-아직 수익 기록이 없습니다.
-</div>
-
-</div>
-
-<button
-    class="danger"
-    onclick="clearHistory()"
->
-전체 수익 기록 삭제
-</button>
-
-</div>
-
-</div>
-
+<footer>
+  성경 본문과 음성은 jw.org에서 확인하세요.
+</footer>
 
 <script>
 
-/* ==========================================
-   현재 매매 데이터
-========================================== */
+const days = [
 
-let trade = {
+{
+day:1,
+range:"마태복음 1–9장",
+book:"마태복음",
+url:"https://www.jw.org/ko/라이브러리/성경/연구용-성경/책명/마태복음/",
+summary:"예수의 출생과 성장, 침례와 시험, 제자들을 부르신 일, 산상 수훈과 여러 기적을 읽습니다.",
+questions:[
+"여호와에 대해 무엇을 배울 수 있습니까?",
+"예수께서는 사람들을 어떻게 대하셨습니까?",
+"오늘 내가 실천할 한 가지는 무엇입니까?"
+],
+practice:"예수의 가르침 가운데 한 가지를 오늘 실제 생활에서 실천해 봅니다."
+},
 
-    stockName: "",
+{
+day:2,
+range:"마태복음 10–18장",
+book:"마태복음",
+url:"https://www.jw.org/ko/라이브러리/성경/연구용-성경/책명/마태복음/",
+summary:"열두 사도의 전파 활동, 왕국에 관한 비유, 믿음, 겸손과 용서에 관한 예수의 가르침을 읽습니다.",
+questions:[
+"전파 활동에서 무엇을 배울 수 있습니까?",
+"용서에 대해 무엇을 배울 수 있습니까?",
+"나는 어떻게 겸손을 나타낼 수 있습니까?"
+],
+practice:"누군가에게 먼저 친절이나 용서를 나타내 봅니다."
+},
 
-    totalQuantity: 0,
+{
+day:3,
+range:"마태복음 19–27장",
+book:"마태복음",
+url:"https://www.jw.org/ko/라이브러리/성경/연구용-성경/책명/마태복음/",
+summary:"제자도, 하느님의 왕국, 예루살렘 입성, 예수의 마지막 활동과 죽음을 읽습니다.",
+questions:[
+"예수를 따르는 데 무엇을 첫째로 두어야 합니까?",
+"예수의 충실함에서 무엇을 배울 수 있습니까?",
+"나의 우선순위를 점검할 필요가 있습니까?"
+],
+practice:"오늘 하루 하느님의 뜻을 첫째 자리에 두는 선택을 한 가지 해 봅니다."
+},
 
-    totalAmount: 0,
+{
+day:4,
+range:"마태복음 28장 + 마가복음 1–8장",
+book:"마가복음",
+url:"https://www.jw.org/ko/라이브러리/성경/연구용-성경/책명/마가복음/",
+summary:"예수의 부활과 제자들에게 주신 사명, 예수의 봉사와 여러 기적을 읽습니다.",
+questions:[
+"부활 희망은 나에게 어떤 힘을 줍니까?",
+"예수께서는 어려운 사람들을 어떻게 도우셨습니까?",
+"좋은 소식을 전하는 데 내가 할 수 있는 일은 무엇입니까?"
+],
+practice:"오늘 누군가에게 성경에서 배운 좋은 점을 한 가지 나누어 봅니다."
+},
 
-    averagePrice: 0
+{
+day:5,
+range:"마가복음 9–16장 + 누가복음 1장",
+book:"누가복음",
+url:"https://www.jw.org/ko/라이브러리/성경/연구용-성경/책명/누가복음/",
+summary:"예수의 변형, 마지막 활동, 죽음과 부활, 그리고 누가복음의 시작을 읽습니다.",
+questions:[
+"예수의 겸손에서 무엇을 배울 수 있습니까?",
+"충실함이 중요한 이유는 무엇입니까?",
+"하느님의 뜻을 따르기 위해 무엇을 조정할 수 있습니까?"
+],
+practice:"오늘 한 가지 상황에서 자신의 뜻보다 성경 원칙을 먼저 선택해 봅니다."
+},
 
-};
+{
+day:6,
+range:"누가복음 2–10장",
+book:"누가복음",
+url:"https://www.jw.org/ko/라이브러리/성경/연구용-성경/책명/누가복음/",
+summary:"예수의 성장, 침례, 전파 활동, 기적과 비유를 읽습니다.",
+questions:[
+"예수께서는 사람들을 어떻게 대하셨습니까?",
+"이웃 사랑을 어떻게 행동으로 나타낼 수 있습니까?",
+"오늘 누구에게 친절을 베풀 수 있습니까?"
+],
+practice:"오늘 한 사람에게 특별히 따뜻한 관심을 보여 줍니다."
+},
 
+{
+day:7,
+range:"누가복음 11–19장",
+book:"누가복음",
+url:"https://www.jw.org/ko/라이브러리/성경/연구용-성경/책명/누가복음/",
+summary:"기도, 왕국, 잃은 사람을 찾는 일, 여러 비유와 예수의 여정을 읽습니다.",
+questions:[
+"기도에서 무엇을 배울 수 있습니까?",
+"여호와께서는 길을 잃은 사람에게 어떤 관심을 보이십니까?",
+"다른 사람을 어떻게 도울 수 있습니까?"
+],
+practice:"오늘 기도할 때 다른 사람을 위해 구체적으로 기도해 봅니다."
+},
 
-/* ==========================================
-   수익 기록 불러오기
-========================================== */
+{
+day:8,
+range:"누가복음 20–24장 + 요한복음 1–4장",
+book:"요한복음",
+url:"https://www.jw.org/ko/라이브러리/성경/연구용-성경/책명/요한복음/",
+summary:"예수의 죽음과 부활, 요한복음의 시작, 니고데모와 사마리아 여자를 읽습니다.",
+questions:[
+"예수께서는 사람들의 마음을 어떻게 도우셨습니까?",
+"진리를 배우는 것이 왜 중요합니까?",
+"성경을 더 알아보기 위해 무엇을 할 수 있습니까?"
+],
+practice:"오늘 성경에서 한 가지 질문을 더 찾아보고 답을 확인합니다."
+},
 
-let profitHistory =
-    JSON.parse(
-        localStorage.getItem(
-            "profitHistory"
-        ) || "[]"
-    );
+{
+day:9,
+range:"요한복음 5–13장",
+book:"요한복음",
+url:"https://www.jw.org/ko/라이브러리/성경/연구용-성경/책명/요한복음/",
+summary:"예수의 기적, 생명의 빵, 선한 목자, 나사로의 부활과 마지막 유월절 기간의 활동을 읽습니다.",
+questions:[
+"예수께서는 권한을 어떻게 사용하셨습니까?",
+"선한 목자에게서 무엇을 배울 수 있습니까?",
+"예수의 목소리를 듣는다는 것을 어떻게 나타낼 수 있습니까?"
+],
+practice:"오늘 다른 사람을 섬기는 행동을 한 가지 해 봅니다."
+},
 
+{
+day:10,
+range:"요한복음 14–21장 + 사도행전 1장",
+book:"사도행전",
+url:"https://www.jw.org/ko/라이브러리/성경/연구용-성경/책명/사도행전/",
+summary:"예수의 마지막 격려와 성령에 관한 말씀, 죽음과 부활, 제자들에게 주신 사명을 읽습니다.",
+questions:[
+"예수께서는 제자들을 어떻게 위로하셨습니까?",
+"어려울 때 무엇을 기억해야 합니까?",
+"예수의 사명을 어떻게 지원할 수 있습니까?"
+],
+practice:"어려운 상황에서 희망을 주는 성경 말씀을 하나 떠올려 봅니다."
+},
 
-/* ==========================================
-   숫자 포맷
-========================================== */
+{
+day:11,
+range:"사도행전 2–10장",
+book:"사도행전",
+url:"https://www.jw.org/ko/라이브러리/성경/연구용-성경/책명/사도행전/",
+summary:"성령이 부어지고 초기 회중이 성장합니다. 스데반, 사울의 변화, 이방인에게 좋은 소식이 전해지는 과정을 읽습니다.",
+questions:[
+"초기 제자들의 용기에서 무엇을 배울 수 있습니까?",
+"사울의 변화가 주는 교훈은 무엇입니까?",
+"사람을 배경으로 판단하지 않으려면 어떻게 해야 합니까?"
+],
+practice:"오늘 사람을 겉모습이나 배경이 아니라 하느님의 관점에서 보려고 노력합니다."
+},
 
-function formatNumber(number) {
+{
+day:12,
+range:"사도행전 11–19장",
+book:"사도행전",
+url:"https://www.jw.org/ko/라이브러리/성경/연구용-성경/책명/사도행전/",
+summary:"이방인 회중의 성장과 바울의 선교 여행, 여러 도시에서 좋은 소식을 전한 일을 읽습니다.",
+questions:[
+"다양한 사람에게 좋은 소식을 전하는 데서 무엇을 배웁니까?",
+"반대를 만났을 때 바울은 어떻게 했습니까?",
+"나도 포기하지 않기 위해 무엇을 할 수 있습니까?"
+],
+practice:"반응이 좋지 않아도 친절과 인내를 유지해 봅니다."
+},
 
-    return Math.round(number)
-        .toLocaleString("ko-KR");
+{
+day:13,
+range:"사도행전 20–28장",
+book:"사도행전",
+url:"https://www.jw.org/ko/라이브러리/성경/연구용-성경/책명/사도행전/",
+summary:"바울의 마지막 여행, 예루살렘에서의 체포와 재판, 로마로의 여행과 전파를 읽습니다.",
+questions:[
+"어려움 속에서도 바울이 계속한 일은 무엇입니까?",
+"충실함을 어떻게 나타낼 수 있습니까?",
+"어려울 때 기억할 성경 원칙은 무엇입니까?"
+],
+practice:"어려움 때문에 미루고 있던 영적인 일을 한 가지 해 봅니다."
+},
 
+{
+day:14,
+range:"로마서 1–9장",
+book:"로마서",
+url:"https://www.jw.org/ko/라이브러리/성경/연구용-성경/책명/로마서/",
+summary:"죄와 의, 믿음, 하느님의 과분한 친절, 그리스도를 통한 구원을 다룹니다.",
+questions:[
+"왜 구원이 필요합니까?",
+"믿음은 행동과 어떤 관계가 있습니까?",
+"과분한 친절에 어떻게 감사할 수 있습니까?"
+],
+practice:"오늘 받은 좋은 것을 하나 떠올리고 감사의 기도를 드립니다."
+},
+
+{
+day:15,
+range:"로마서 10–16장 + 고린도 전서 1–2장",
+book:"고린도 전서",
+url:"https://www.jw.org/ko/라이브러리/성경/연구용-성경/책명/고린도-전서/",
+summary:"믿음과 전파, 그리스도인 생활, 회중의 연합과 하느님의 지혜를 읽습니다.",
+questions:[
+"좋은 소식을 전하는 일이 왜 중요합니까?",
+"회중의 연합에 어떻게 기여할 수 있습니까?",
+"하느님의 지혜를 신뢰한다는 것은 무엇입니까?"
+],
+practice:"다른 사람과 의견이 달라도 평화를 유지하도록 노력합니다."
+},
+
+{
+day:16,
+range:"고린도 전서 3–11장",
+book:"고린도 전서",
+url:"https://www.jw.org/ko/라이브러리/성경/연구용-성경/책명/고린도-전서/",
+summary:"회중의 분열, 도덕 문제, 우상 숭배, 양심, 자유와 사랑에 관한 교훈을 읽습니다.",
+questions:[
+"사랑이 중요한 이유는 무엇입니까?",
+"나의 자유가 다른 사람에게 어떤 영향을 줄 수 있습니까?",
+"연합을 위해 내가 할 수 있는 일은 무엇입니까?"
+],
+practice:"오늘 자신의 권리보다 다른 사람의 유익을 먼저 생각해 봅니다."
+},
+
+{
+day:17,
+range:"고린도 전서 12–16장 + 고린도 후서 1–4장",
+book:"고린도 후서",
+url:"https://www.jw.org/ko/라이브러리/성경/연구용-성경/책명/고린도-후서/",
+summary:"영적 선물, 사랑, 부활, 봉사의 직무, 위로와 격려에 관한 내용을 읽습니다.",
+questions:[
+"각 사람의 능력이 왜 소중합니까?",
+"사랑을 행동으로 어떻게 나타낼 수 있습니까?",
+"어려운 사람을 어떻게 위로할 수 있습니까?"
+],
+practice:"오늘 지치거나 어려움을 겪는 사람을 격려합니다."
+},
+
+{
+day:18,
+range:"고린도 후서 5–13장 + 갈라디아서 1장",
+book:"갈라디아서",
+url:"https://www.jw.org/ko/라이브러리/성경/연구용-성경/책명/갈라디아서/",
+summary:"하느님과의 화해, 그리스도인 봉사, 관대함과 좋은 소식의 순수성을 다룹니다.",
+questions:[
+"하느님과 화해한다는 것은 무엇입니까?",
+"다른 사람을 돕는 데 어떤 태도가 필요합니까?",
+"좋은 소식의 순수성을 어떻게 지킬 수 있습니까?"
+],
+practice:"도움을 필요로 하는 사람에게 실제적인 도움을 한 가지 줍니다."
+},
+
+{
+day:19,
+range:"갈라디아서 2–6장 + 에베소서 1–4장",
+book:"에베소서",
+url:"https://www.jw.org/ko/라이브러리/성경/연구용-성경/책명/에베소서/",
+summary:"믿음과 자유, 영의 열매, 그리스도 안에서의 연합을 읽습니다.",
+questions:[
+"영의 열매 중 어떤 특성을 더 발전시키고 싶습니까?",
+"자유를 올바르게 사용하려면 어떻게 해야 합니까?",
+"연합을 위해 어떤 노력을 할 수 있습니까?"
+],
+practice:"오늘 영의 열매 가운데 한 가지 특성을 의식적으로 나타냅니다."
+},
+
+{
+day:20,
+range:"에베소서 5–6장 + 빌립보서 1–4장 + 골로새서 1–3장",
+book:"골로새서",
+url:"https://www.jw.org/ko/라이브러리/성경/연구용-성경/책명/골로새서/",
+summary:"가족생활, 영적 갑주, 기쁨, 겸손, 그리스도의 역할과 새 인간에 관한 교훈을 읽습니다.",
+questions:[
+"영적 갑주 중 무엇이 특히 필요합니까?",
+"어려울 때 기쁨을 유지하려면 어떻게 해야 합니까?",
+"예수의 겸손을 어떻게 본받을 수 있습니까?"
+],
+practice:"오늘 한 사람에게 겸손하게 양보하거나 도움을 줍니다."
+},
+
+{
+day:21,
+range:"골로새서 4장 + 데살로니가 전서 1–5장 + 데살로니가 후서 1–2장",
+book:"데살로니가 전서",
+url:"https://www.jw.org/ko/라이브러리/성경/연구용-성경/책명/데살로니가-전서/",
+summary:"기도와 말, 믿음과 사랑과 인내, 부활 희망과 여호와의 날에 관한 교훈을 읽습니다.",
+questions:[
+"믿음·사랑·인내를 어떻게 키울 수 있습니까?",
+"미래의 희망이 현재 생활에 어떤 힘을 줍니까?",
+"기도 생활에서 발전시킬 점은 무엇입니까?"
+],
+practice:"오늘 기도 시간을 조금 더 길게 가지고 감사와 희망을 표현합니다."
+},
+
+{
+day:22,
+range:"데살로니가 후서 3장 + 디모데 전서 1–6장 + 디모데 후서 1장",
+book:"디모데 전서",
+url:"https://www.jw.org/ko/라이브러리/성경/연구용-성경/책명/디모데-전서/",
+summary:"좋은 질서, 건전한 가르침, 회중을 돌보는 일, 만족과 물질에 대한 태도를 다룹니다.",
+questions:[
+"만족하는 생활이 왜 중요합니까?",
+"돈에 대한 올바른 태도는 무엇입니까?",
+"맡은 책임을 충실히 수행하려면 어떻게 해야 합니까?"
+],
+practice:"오늘 가진 것에 대해 세 가지 감사할 점을 생각합니다."
+},
+
+{
+day:23,
+range:"디모데 후서 2–4장 + 디도서 1–3장 + 빌레몬서 + 히브리서 1장",
+book:"히브리서",
+url:"https://www.jw.org/ko/라이브러리/성경/연구용-성경/책명/히브리서/",
+summary:"충실한 봉사, 성경의 유익, 회중을 세우는 일, 용서와 형제 사랑, 예수의 뛰어난 위치를 읽습니다.",
+questions:[
+"성경이 나를 어떻게 바로잡아 줄 수 있습니까?",
+"용서를 어떻게 나타낼 수 있습니까?",
+"예수의 위치를 이해하는 것이 왜 중요합니까?"
+],
+practice:"성경의 조언을 받아들이고 고칠 수 있는 점을 한 가지 찾아봅니다."
+},
+
+{
+day:24,
+range:"히브리서 2–9장",
+book:"히브리서",
+url:"https://www.jw.org/ko/라이브러리/성경/연구용-성경/책명/히브리서/",
+summary:"예수께서 뛰어나신 분임을 보여 주고, 믿음, 안식, 대제사장, 새 계약과 희생을 다룹니다.",
+questions:[
+"예수의 역할을 알면 믿음이 어떻게 강해집니까?",
+"믿음은 행동과 어떤 관계가 있습니까?",
+"하느님의 약속을 얼마나 신뢰하고 있습니까?"
+],
+practice:"오늘 믿음을 행동으로 보여 줄 수 있는 일을 한 가지 합니다."
+},
+
+{
+day:25,
+range:"히브리서 10–13장 + 야고보서 1–4장",
+book:"야고보서",
+url:"https://www.jw.org/ko/라이브러리/성경/연구용-성경/책명/야고보서/",
+summary:"예수의 희생, 믿음의 본, 인내, 형제 사랑, 실천하는 믿음, 말과 욕망을 제어하는 일에 대해 읽습니다.",
+questions:[
+"믿음이 행동으로 나타나고 있습니까?",
+"말이 다른 사람에게 어떤 영향을 줍니까?",
+"형제 사랑을 오늘 어떻게 나타낼 수 있습니까?"
+],
+practice:"오늘 말하기 전에 상대방에게 도움이 되는 말인지 먼저 생각합니다."
+},
+
+{
+day:26,
+range:"야고보서 5장 + 베드로 전서 1–5장 + 베드로 후서 1–2장",
+book:"베드로 전서",
+url:"https://www.jw.org/ko/라이브러리/성경/연구용-성경/책명/베드로-전서/",
+summary:"인내와 기도, 고난 가운데 충실함, 거룩한 행실, 영적 성장과 거짓 가르침에 대한 경고를 읽습니다.",
+questions:[
+"고난 중에 어떻게 충실함을 유지할 수 있습니까?",
+"영적으로 성장하려면 어떤 특성을 키워야 합니까?",
+"거짓 가르침을 경계하려면 무엇이 필요합니까?"
+],
+practice:"오늘 영적으로 성장시키고 싶은 특성을 하나 정하고 실천합니다."
+},
+
+{
+day:27,
+range:"베드로 후서 3장 + 요한 1서 1–5장 + 요한 2서 + 요한 3서",
+book:"요한 1서",
+url:"https://www.jw.org/ko/라이브러리/성경/연구용-성경/책명/요한-1서/",
+summary:"여호와의 날, 사랑과 진리, 죄를 피하는 일, 형제들을 돕는 일에 관한 교훈을 읽습니다.",
+questions:[
+"사랑과 순종은 어떤 관계가 있습니까?",
+"행동으로 사랑을 어떻게 나타낼 수 있습니까?",
+"다른 사람을 돕는 데서 무엇을 배울 수 있습니까?"
+],
+practice:"오늘 도움이 필요한 사람에게 먼저 관심을 보입니다."
+},
+
+{
+day:28,
+range:"유다서 + 요한 계시록 1–7장",
+book:"요한 계시록",
+url:"https://www.jw.org/ko/라이브러리/성경/연구용-성경/책명/요한-계시록/",
+summary:"믿음을 위해 힘쓰라는 권고와 거짓 가르침에 대한 경고, 일곱 회중과 봉인에 관한 환상을 읽습니다.",
+questions:[
+"믿음을 지키기 위해 어떤 노력이 필요합니까?",
+"예수께서 회중을 살피신다는 점에서 무엇을 배울 수 있습니까?",
+"영적으로 깨어 있기 위해 무엇을 할 수 있습니까?"
+],
+practice:"오늘 자신의 영적 상태를 차분히 점검해 봅니다."
+},
+
+{
+day:29,
+range:"요한 계시록 8–15장",
+book:"요한 계시록",
+url:"https://www.jw.org/ko/라이브러리/성경/연구용-성경/책명/요한-계시록/",
+summary:"일곱 나팔과 하늘의 환상, 용과 짐승, 하느님의 왕국과 관련된 환상을 읽습니다.",
+questions:[
+"압력 속에서도 충실함을 유지하는 것이 왜 중요합니까?",
+"하느님의 왕국에 대한 희망이 어떤 힘을 줍니까?",
+"세상의 압력에 굴복하지 않으려면 어떻게 해야 합니까?"
+],
+practice:"오늘 믿음을 약화시킬 수 있는 한 가지 영향을 피합니다."
+},
+
+{
+day:30,
+range:"요한 계시록 16–22장",
+book:"요한 계시록",
+url:"https://www.jw.org/ko/라이브러리/성경/연구용-성경/책명/요한-계시록/",
+summary:"마지막 심판, 큰 바빌론의 멸망, 사탄의 최종 심판, 새 하늘과 새 땅, 생명수와 생명나무에 관한 희망을 읽습니다.",
+questions:[
+"여호와께서 약속하신 미래에서 가장 기대되는 것은 무엇입니까?",
+"영원한 생명의 희망이 현재의 선택에 어떤 영향을 줍니까?",
+"30일 동안 가장 크게 배운 점은 무엇입니까?"
+],
+practice:"30일 동안 배운 점 중 앞으로 계속 실천할 한 가지를 정합니다."
 }
 
+];
 
-/* ==========================================
-   매수 조건 확인
-========================================== */
+let currentDay = 1;
+let completed = JSON.parse(localStorage.getItem("bible30") || "[]");
 
-function checkBuyCondition() {
+function renderButtons() {
+  const box = document.getElementById("dayButtons");
+  box.innerHTML = "";
 
-    const currentPrice =
-        Number(
-            document.getElementById(
-                "currentPrice"
-            ).value
-        );
+  days.forEach(d => {
+    const btn = document.createElement("button");
+    btn.className = "day-button";
 
-    const ma20 =
-        Number(
-            document.getElementById(
-                "ma20"
-            ).value
-        );
-
-    const status =
-        document.getElementById(
-            "buyStatus"
-        );
-
-
-    if (
-        !currentPrice ||
-        !ma20
-    ) {
-
-        status.textContent =
-            "현재 주가와 20일선을 입력하세요.";
-
-        status.className =
-            "status buy-stop";
-
-        return;
-
+    if (d.day === currentDay) {
+      btn.classList.add("active");
     }
 
-
-    /*
-    ======================================
-    1차 매수
-    ======================================
-    */
-
-    if (
-        trade.totalQuantity === 0
-    ) {
-
-        if (
-            currentPrice <= ma20
-        ) {
-
-            status.textContent =
-                "✅ 20일선 아래입니다. 1차 매수 가능합니다.";
-
-            status.className =
-                "status buy-ok";
-
-        } else {
-
-            status.textContent =
-                "⏸ 현재가가 20일선 위입니다. 매수 통과.";
-
-            status.className =
-                "status buy-stop";
-
-        }
-
-        return;
-
-    }
-
-
-    /*
-    ======================================
-    추가 매수
-    ======================================
-    */
-
-    if (
-        currentPrice > ma20
-    ) {
-
-        status.textContent =
-            "⏸ 현재가가 20일선 위입니다. 추가매수 통과.";
-
-        status.className =
-            "status buy-stop";
-
-        return;
-
-    }
-
-
-    if (
-        currentPrice < trade.averagePrice
-    ) {
-
-        status.textContent =
-            "✅ 20일선 아래 + 평균매수가보다 낮습니다. 추가매수 가능합니다.";
-
-        status.className =
-            "status buy-ok";
-
+    if (completed.includes(d.day)) {
+      btn.classList.add("done");
+      btn.textContent = "✓ " + d.day;
     } else {
-
-        status.textContent =
-            "⏸ 20일선 아래이지만 평균매수가보다 높습니다. 추가매수 통과.";
-
-        status.className =
-            "status buy-stop";
-
+      btn.textContent = d.day + "일";
     }
 
-}
-
-
-/* ==========================================
-   매수 실행
-========================================== */
-
-function executeBuy() {
-
-    const stockName =
-        document.getElementById(
-            "stockName"
-        ).value.trim();
-
-    const currentPrice =
-        Number(
-            document.getElementById(
-                "currentPrice"
-            ).value
-        );
-
-    const ma20 =
-        Number(
-            document.getElementById(
-                "ma20"
-            ).value
-        );
-
-    const quantity =
-        Number(
-            document.getElementById(
-                "buyQuantity"
-            ).value
-        );
-
-
-    if (
-        !stockName ||
-        !currentPrice ||
-        !ma20 ||
-        !quantity
-    ) {
-
-        alert(
-            "종목명, 현재가, 20일선, 매수수량을 모두 입력하세요."
-        );
-
-        return;
-
-    }
-
-
-    /*
-    ======================================
-    20일선 조건
-    ======================================
-    */
-
-    if (
-        currentPrice > ma20
-    ) {
-
-        alert(
-            "현재가가 20일 이동평균선 위입니다.\n매수하지 않고 통과합니다."
-        );
-
-        return;
-
-    }
-
-
-    /*
-    ======================================
-    추가매수 조건
-    ======================================
-    */
-
-    if (
-        trade.totalQuantity > 0 &&
-        currentPrice >= trade.averagePrice
-    ) {
-
-        alert(
-            "현재가가 기존 평균매수가보다 높거나 같습니다.\n추가매수하지 않고 통과합니다."
-        );
-
-        return;
-
-    }
-
-
-    /*
-    ======================================
-    매수 처리
-    ======================================
-    */
-
-    const buyAmount =
-        currentPrice * quantity;
-
-
-    trade.stockName =
-        stockName;
-
-
-    trade.totalQuantity +=
-        quantity;
-
-
-    trade.totalAmount +=
-        buyAmount;
-
-
-    trade.averagePrice =
-        trade.totalAmount /
-        trade.totalQuantity;
-
-
-    document.getElementById(
-        "buyMessage"
-    ).textContent =
-        `✅ ${quantity}주 매수 완료`;
-
-
-    updateDisplay();
-
-}
-
-
-/* ==========================================
-   화면 업데이트
-========================================== */
-
-function updateDisplay() {
-
-    document.getElementById(
-        "displayStock"
-    ).textContent =
-        trade.stockName || "-";
-
-
-    document.getElementById(
-        "totalQuantity"
-    ).textContent =
-        formatNumber(
-            trade.totalQuantity
-        ) + "주";
-
-
-    document.getElementById(
-        "totalAmount"
-    ).textContent =
-        formatNumber(
-            trade.totalAmount
-        ) + "원";
-
-
-    document.getElementById(
-        "averagePrice"
-    ).textContent =
-        formatNumber(
-            trade.averagePrice
-        ) + "원";
-
-
-    const targetPrice =
-        trade.averagePrice * 1.05;
-
-
-    document.getElementById(
-        "targetPrice"
-    ).textContent =
-        formatNumber(
-            targetPrice
-        ) + "원";
-
-
-    const expectedProfit =
-        (
-            targetPrice -
-            trade.averagePrice
-        )
-        *
-        trade.totalQuantity;
-
-
-    document.getElementById(
-        "expectedProfit"
-    ).textContent =
-        "+" +
-        formatNumber(
-            expectedProfit
-        ) +
-        "원";
-
-}
-
-
-/* ==========================================
-   매도 조건 확인
-========================================== */
-
-function checkSellCondition() {
-
-    const sellPrice =
-        Number(
-            document.getElementById(
-                "sellPrice"
-            ).value
-        );
-
-
-    if (
-        trade.totalQuantity === 0
-    ) {
-
-        alert(
-            "현재 보유 주식이 없습니다."
-        );
-
-        return;
-
-    }
-
-
-    if (
-        !sellPrice
-    ) {
-
-        alert(
-            "매도가를 입력하세요."
-        );
-
-        return;
-
-    }
-
-
-    const targetPrice =
-        trade.averagePrice * 1.05;
-
-
-    const status =
-        document.getElementById(
-            "sellStatus"
-        );
-
-
-    if (
-        sellPrice >= targetPrice
-    ) {
-
-        const profit =
-            (
-                sellPrice -
-                trade.averagePrice
-            )
-            *
-            trade.totalQuantity;
-
-
-        status.textContent =
-            "🎉 +5% 목표가에 도달했습니다. 전량매도 가능합니다.\n" +
-            "예상 수익금: " +
-            formatNumber(
-                profit
-            ) +
-            "원";
-
-
-        status.className =
-            "status buy-ok";
-
-    } else {
-
-        const profit =
-            (
-                sellPrice -
-                trade.averagePrice
-            )
-            *
-            trade.totalQuantity;
-
-
-        status.textContent =
-            "⏳ 아직 +5% 목표가에 도달하지 않았습니다.\n" +
-            "현재 예상 수익금: " +
-            formatNumber(
-                profit
-            ) +
-            "원";
-
-
-        status.className =
-            "status buy-stop";
-
-    }
-
-}
-
-
-/* ==========================================
-   전량 매도
-========================================== */
-
-function executeSell() {
-
-    if (
-        trade.totalQuantity === 0
-    ) {
-
-        alert(
-            "보유 주식이 없습니다."
-        );
-
-        return;
-
-    }
-
-
-    const sellPrice =
-        Number(
-            document.getElementById(
-                "sellPrice"
-            ).value
-        );
-
-
-    if (
-        !sellPrice
-    ) {
-
-        alert(
-            "매도가를 입력하세요."
-        );
-
-        return;
-
-    }
-
-
-    const targetPrice =
-        trade.averagePrice * 1.05;
-
-
-    if (
-        sellPrice < targetPrice
-    ) {
-
-        alert(
-            "아직 평균매수가 대비 +5%에 도달하지 않았습니다."
-        );
-
-        return;
-
-    }
-
-
-    const profit =
-        (
-            sellPrice -
-            trade.averagePrice
-        )
-        *
-        trade.totalQuantity;
-
-
-    const profitRate =
-        (
-            (
-                sellPrice /
-                trade.averagePrice
-            ) - 1
-        )
-        * 100;
-
-
-    /*
-    ======================================
-    수익 기록 저장
-    ======================================
-    */
-
-    const record = {
-
-        id:
-            Date.now(),
-
-        stockName:
-            trade.stockName,
-
-        quantity:
-            trade.totalQuantity,
-
-        averagePrice:
-            trade.averagePrice,
-
-        sellPrice:
-            sellPrice,
-
-        profit:
-            profit,
-
-        profitRate:
-            profitRate,
-
-        date:
-            new Date()
-            .toLocaleString(
-                "ko-KR"
-            )
-
+    btn.onclick = () => {
+      currentDay = d.day;
+      renderButtons();
+      renderDay();
+      window.scrollTo({top: 0, behavior: "smooth"});
     };
 
+    box.appendChild(btn);
+  });
 
-    profitHistory.push(
-        record
-    );
-
-
-    localStorage.setItem(
-
-        "profitHistory",
-
-        JSON.stringify(
-            profitHistory
-        )
-
-    );
-
-
-    alert(
-
-        "🎉 전량매도 완료!\n\n" +
-
-        "종목: " +
-        trade.stockName +
-        "\n" +
-
-        "수익금: +" +
-        formatNumber(
-            profit
-        ) +
-        "원"
-
-    );
-
-
-    /*
-    ======================================
-    현재 매매 초기화
-    ======================================
-    */
-
-    trade = {
-
-        stockName: "",
-
-        totalQuantity: 0,
-
-        totalAmount: 0,
-
-        averagePrice: 0
-
-    };
-
-
-    document.getElementById(
-        "stockName"
-    ).value = "";
-
-
-    document.getElementById(
-        "currentPrice"
-    ).value = "";
-
-
-    document.getElementById(
-        "ma20"
-    ).value = "";
-
-
-    document.getElementById(
-        "buyQuantity"
-    ).value = "";
-
-
-    document.getElementById(
-        "sellPrice"
-    ).value = "";
-
-
-    updateDisplay();
-
-    renderHistory();
-
+  updateProgress();
 }
 
+function renderDay() {
+  const d = days.find(x => x.day === currentDay);
 
-/* ==========================================
-   수익 기록 표시
-========================================== */
+  const questions = d.questions.map((q, i) =>
+    `<div class="question"><strong>${i + 1}.</strong> ${q}</div>`
+  ).join("");
 
-function renderHistory() {
+  const isDone = completed.includes(d.day);
 
-    const list =
-        document.getElementById(
-            "historyList"
-        );
+  document.getElementById("content").innerHTML = `
+    <div class="day-title">📅 ${d.day}일차</div>
 
+    <div class="range">${d.range}</div>
 
-    if (
-        profitHistory.length === 0
-    ) {
+    <a class="action read"
+       href="${d.url}"
+       target="_blank"
+       rel="noopener">
+       📖 jw.org에서 성경 읽기
+    </a>
 
-        list.innerHTML =
-            `<div class="empty">
-                아직 수익 기록이 없습니다.
-            </div>`;
+    <a class="action audio"
+       href="${d.url}"
+       target="_blank"
+       rel="noopener">
+       🔊 jw.org에서 음성으로 듣기
+    </a>
 
-        return;
+    <div class="section-title">📝 오늘의 내용</div>
+    <p>${d.summary}</p>
 
-    }
+    <div class="section-title">💭 묵상해 볼 질문</div>
+    ${questions}
 
+    <div class="section-title">⭐ 오늘의 실천</div>
+    <div class="practice">${d.practice}</div>
 
-    list.innerHTML =
-        profitHistory
-        .slice()
-        .reverse()
-        .map(
-            record => `
+    <button class="complete" onclick="toggleComplete(${d.day})">
+      ${isDone ? "✅ 읽기 완료 취소" : "☑️ 오늘 읽기 완료"}
+    </button>
 
-            <div class="history-item">
-
-                <strong>
-                    ${record.stockName}
-                </strong>
-
-                <div>
-                    매도일:
-                    ${record.date}
-                </div>
-
-                <div>
-                    매수수량:
-                    ${formatNumber(record.quantity)}주
-                </div>
-
-                <div>
-                    평균매수가:
-                    ${formatNumber(record.averagePrice)}원
-                </div>
-
-                <div>
-                    매도가:
-                    ${formatNumber(record.sellPrice)}원
-                </div>
-
-                <div class="profit">
-                    수익금:
-                    +${formatNumber(record.profit)}원
-                </div>
-
-                <div>
-                    수익률:
-                    ${record.profitRate.toFixed(2)}%
-                </div>
-
-                <button
-                    class="danger"
-                    onclick="deleteHistory(${record.id})"
-                >
-                    이 기록 삭제
-                </button>
-
-            </div>
-
-        `
-        )
-        .join("");
-
+    <p class="small">
+      ${isDone
+        ? "이 날짜는 완료로 표시되어 있습니다."
+        : "성경을 읽고 음성을 들은 뒤 완료 버튼을 눌러 주세요."}
+    </p>
+  `;
 }
 
+function toggleComplete(day) {
+  if (completed.includes(day)) {
+    completed = completed.filter(x => x !== day);
+  } else {
+    completed.push(day);
+  }
 
-/* ==========================================
-   개별 기록 삭제
-========================================== */
-
-function deleteHistory(id) {
-
-    if (
-        !confirm(
-            "이 수익 기록을 삭제할까요?"
-        )
-    ) {
-
-        return;
-
-    }
-
-
-    profitHistory =
-        profitHistory.filter(
-            item =>
-                item.id !== id
-        );
-
-
-    localStorage.setItem(
-
-        "profitHistory",
-
-        JSON.stringify(
-            profitHistory
-        )
-
-    );
-
-
-    renderHistory();
-
+  localStorage.setItem("bible30", JSON.stringify(completed));
+  renderButtons();
+  renderDay();
 }
 
+function updateProgress() {
+  const count = completed.length;
+  const percent = Math.round((count / 30) * 100);
 
-/* ==========================================
-   전체 기록 삭제
-========================================== */
+  document.getElementById("progressText").textContent =
+    `${count} / 30일 완료`;
 
-function clearHistory() {
-
-    if (
-        profitHistory.length === 0
-    ) {
-
-        alert(
-            "삭제할 기록이 없습니다."
-        );
-
-        return;
-
-    }
-
-
-    if (
-        !confirm(
-            "모든 수익 기록을 삭제할까요?"
-        )
-    ) {
-
-        return;
-
-    }
-
-
-    profitHistory = [];
-
-
-    localStorage.removeItem(
-        "profitHistory"
-    );
-
-
-    renderHistory();
-
+  document.getElementById("progressBar").style.width =
+    percent + "%";
 }
 
+function resetProgress() {
+  if (confirm("30일 진행 기록을 모두 지울까요?")) {
+    completed = [];
+    localStorage.removeItem("bible30");
+    renderButtons();
+    renderDay();
+  }
+}
 
-/* ==========================================
-   시작
-========================================== */
-
-renderHistory();
-
-updateDisplay();
+renderButtons();
+renderDay();
 
 </script>
 
